@@ -39,7 +39,12 @@
   .pickup-item{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid var(--line);font-size:13px;}
   .pickup-item img{width:38px;height:38px;object-fit:cover;border-radius:6px;flex-shrink:0;}
   .pickup-item span{flex:1;color:var(--ink);}
-  .lib-card{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px;}
+  .lib-hotel-group{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px;}
+  .lib-hotel-group .lib-name{font-size:14px;font-weight:600;margin-bottom:8px;}
+  .lib-photos-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .lib-photo-thumb{position:relative;width:64px;height:64px;}
+  .lib-photo-thumb img{width:64px;height:64px;object-fit:cover;border-radius:8px;display:block;}
+  .lib-photo-del{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:var(--night);color:#fff;font-size:11px;font-weight:700;cursor:pointer;line-height:1;padding:0;}
   .lib-card img{width:64px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0;}
   .lib-card .lib-name{flex:1;font-size:14px;font-weight:600;}
   .lib-del{background:var(--night);color:var(--sand);border:none;border-radius:7px;padding:8px 10px;font-size:12px;font-weight:700;cursor:pointer;}
@@ -225,7 +230,7 @@
     </div>
     <div class="card">
       <h2>Fotos salvas por hotel</h2>
-      <div class="hint" style="margin-top:0;margin-bottom:12px;">Ao escolher esse hotel numa mensagem, a foto entra sozinha. Toque em Excluir pra remover uma.</div>
+      <div class="hint" style="margin-top:0;margin-bottom:12px;">Pode salvar quantas fotos quiser por hotel. A mais recente é a que entra sozinha na mensagem. Toque no ✕ pra excluir uma foto.</div>
       <div id="lib_full_list"></div>
       <div class="hint" id="lib_empty_msg" style="display:none;">Nenhuma foto salva ainda.</div>
     </div>
@@ -271,7 +276,7 @@ let currentLang = 'es';
 let photoDataUrl = null;
 let photoIsAuto = false;
 
-const HOTELS = ['Aria','Bellagio','Bluegreen Vacation','Caesars Palace','Casino Royale','Circa','Circus Circus','Cosmopolitan','Delano','Downtown Grand','Encore','Excalibur','Flamingo','Fontainebleau','Four Seasons','Golden Nugget','Harrah\'s','Horseshoe','Luxor','Mandalay Bay','MGM Grand','New York-New York','Palazzo','Paris','Park MGM','Planet Hollywood','Plaza','Resorts World','Rio','Sahara','The D','The LINQ','Treasure Island (TI)','Tuscany','Vdara','Venetian','Waldorf Astoria','Westgate','Wynn','Outro (digitar)'];
+const HOTELS = ['Aria','Bellagio','Bluegreen Vacation','Caesars Palace','Casino Royale','Circa','Circus Circus','Cosmopolitan','Delano','Downtown Grand','Ellis Island','Encore','Excalibur','Flamingo','Fontainebleau','Four Seasons','Golden Nugget','Harrah\'s','Horseshoe','Luxor','Mandalay Bay','MGM Grand','New York-New York','Palazzo','Paris','Park MGM','Planet Hollywood','Plaza','Resorts World','Rio','Sahara','The D','The LINQ','Treasure Island (TI)','Tuscany','Vdara','Venetian','Waldorf Astoria','Westgate','Wynn','Outro (digitar)'];
 
 function populateHotelSelect(){
   const select = document.getElementById('f_hotel');
@@ -315,8 +320,21 @@ function toggleTempFields(){
 }
 
 const LIB_KEY = 'lucris_pickup_library_v1';
-function loadLibrary(){ try{ return JSON.parse(localStorage.getItem(LIB_KEY)) || {}; }catch(err){ return {}; } }
-function saveLibrary(lib){ try{ localStorage.setItem(LIB_KEY, JSON.stringify(lib)); }catch(err){ alert('Não foi possível salvar a biblioteca neste navegador.'); } }
+function loadLibrary(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(LIB_KEY)) || {};
+    const norm = {};
+    Object.keys(raw).forEach(name => {
+      norm[name] = Array.isArray(raw[name]) ? raw[name] : [raw[name]];
+    });
+    return norm;
+  }catch(err){ return {}; }
+}
+function saveLibrary(lib){ try{ localStorage.setItem(LIB_KEY, JSON.stringify(lib)); return true; }catch(err){ alert('Espaço cheio! O navegador tem um limite de espaço pra guardar fotos. Exclua algumas fotos antigas na Biblioteca e tente salvar de novo.'); return false; } }
+function latestPhoto(lib, name){
+  const arr = lib[name];
+  return (arr && arr.length) ? arr[arr.length - 1] : null;
+}
 
 function refreshPickupUI(){
   const lib = loadLibrary();
@@ -324,9 +342,11 @@ function refreshPickupUI(){
   if(list){
     list.innerHTML = '';
     Object.keys(lib).sort().forEach(name => {
+      const photo = latestPhoto(lib, name);
+      if(!photo) return;
       const row = document.createElement('div');
       row.className = 'pickup-item';
-      row.innerHTML = `<img src="${lib[name]}"><span>${name}</span>`;
+      row.innerHTML = `<img src="${photo}"><span>${name}</span>`;
       list.appendChild(row);
     });
   }
@@ -335,22 +355,32 @@ function refreshPickupUI(){
 
 function renderLibraryScreen(){
   const lib = loadLibrary();
-  const names = Object.keys(lib).sort();
+  const names = Object.keys(lib).filter(n => lib[n] && lib[n].length).sort();
   const container = document.getElementById('lib_full_list');
   const emptyMsg = document.getElementById('lib_empty_msg');
   container.innerHTML = '';
   emptyMsg.style.display = names.length ? 'none' : 'block';
   names.forEach(name => {
     const row = document.createElement('div');
-    row.className = 'lib-card';
-    row.innerHTML = `<img src="${lib[name]}"><div class="lib-name">${name}</div><button class="lib-del" data-name="${name}">Excluir</button>`;
+    row.className = 'lib-hotel-group';
+    const photosHtml = lib[name].map((photo, idx) =>
+      `<div class="lib-photo-thumb">
+         <img src="${photo}">
+         <button class="lib-photo-del" data-name="${name}" data-idx="${idx}">✕</button>
+       </div>`
+    ).join('');
+    row.innerHTML = `<div class="lib-name">${name}</div><div class="lib-photos-row">${photosHtml}</div>`;
     container.appendChild(row);
   });
-  container.querySelectorAll('.lib-del').forEach(btn => {
+  container.querySelectorAll('.lib-photo-del').forEach(btn => {
     btn.addEventListener('click', () => {
       const name = btn.dataset.name;
+      const idx = parseInt(btn.dataset.idx, 10);
       const lib2 = loadLibrary();
-      delete lib2[name];
+      if(lib2[name]){
+        lib2[name].splice(idx, 1);
+        if(lib2[name].length === 0) delete lib2[name];
+      }
       saveLibrary(lib2);
       refreshPickupUI();
     });
@@ -884,8 +914,9 @@ function applyHotelPhoto(){
   document.getElementById('f_hotel_custom').style.display = custom ? 'block' : 'none';
   const lib = loadLibrary();
   const name = custom ? document.getElementById('f_hotel_custom').value.trim() : hotel;
-  if(name && lib[name]){
-    photoDataUrl = lib[name]; photoIsAuto = true;
+  const photo = name ? latestPhoto(lib, name) : null;
+  if(photo){
+    photoDataUrl = photo; photoIsAuto = true;
     const img = document.getElementById('photo_preview');
     img.src = photoDataUrl; img.style.display = 'block';
   }else if(photoIsAuto){
@@ -915,16 +946,43 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
   });
 });
 
-document.getElementById('f_photo').addEventListener('change', (e) => {
+function compressImage(file, maxDim, quality){
+  maxDim = maxDim || 900;
+  quality = quality || 0.72;
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if(w > maxDim || h > maxDim){
+          if(w > h){ h = Math.round(h * maxDim / w); w = maxDim; }
+          else { w = Math.round(w * maxDim / h); h = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+document.getElementById('f_photo').addEventListener('change', async (e) => {
   const file = e.target.files[0];
   if(!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    photoDataUrl = ev.target.result; photoIsAuto = false;
+  try{
+    photoDataUrl = await compressImage(file);
+    photoIsAuto = false;
     const img = document.getElementById('photo_preview');
     img.src = photoDataUrl; img.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
+  }catch(err){
+    alert('Não foi possível carregar essa foto. Tente outra.');
+  }
 });
 
 function getCurrentHotelName(){
@@ -938,7 +996,8 @@ document.getElementById('save_pickup_btn').addEventListener('click', () => {
   if(!name){ alert('Selecione um hotel (ou digite o nome) no topo primeiro.'); return; }
   if(!photoDataUrl){ alert('Escolha uma foto primeiro.'); return; }
   const lib = loadLibrary();
-  lib[name] = photoDataUrl;
+  if(!lib[name]) lib[name] = [];
+  if(lib[name][lib[name].length - 1] !== photoDataUrl) lib[name].push(photoDataUrl);
   saveLibrary(lib);
   photoIsAuto = true;
   refreshPickupUI();
@@ -948,12 +1007,14 @@ document.getElementById('delete_pickup_btn').addEventListener('click', () => {
   const name = getCurrentHotelName();
   if(!name){ alert('Selecione um hotel no topo primeiro.'); return; }
   const lib = loadLibrary();
-  if(!lib[name]){ alert('Este hotel não tem foto salva.'); return; }
-  delete lib[name];
+  if(!lib[name] || !lib[name].length){ alert('Este hotel não tem foto salva.'); return; }
+  lib[name].pop();
+  if(lib[name].length === 0) delete lib[name];
   saveLibrary(lib);
   photoDataUrl = null; photoIsAuto = false;
   document.getElementById('photo_preview').style.display = 'none';
   refreshPickupUI();
+  applyHotelPhoto();
 });
 
 document.getElementById('copy_btn').addEventListener('click', async () => {
@@ -1084,16 +1145,16 @@ document.getElementById('lib_hotel_select').addEventListener('change', () => {
   document.getElementById('lib_hotel_custom').style.display = custom ? 'block' : 'none';
 });
 
-document.getElementById('lib_photo_input').addEventListener('change', (e) => {
+document.getElementById('lib_photo_input').addEventListener('change', async (e) => {
   const file = e.target.files[0];
   if(!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    libPhotoDataUrl = ev.target.result;
+  try{
+    libPhotoDataUrl = await compressImage(file);
     const img = document.getElementById('lib_photo_preview');
     img.src = libPhotoDataUrl; img.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
+  }catch(err){
+    alert('Não foi possível carregar essa foto. Tente outra.');
+  }
 });
 
 document.getElementById('lib_save_btn').addEventListener('click', () => {
@@ -1102,7 +1163,8 @@ document.getElementById('lib_save_btn').addEventListener('click', () => {
   if(!name){ alert('Selecione um hotel (ou digite o nome) primeiro.'); return; }
   if(!libPhotoDataUrl){ alert('Escolha uma foto primeiro.'); return; }
   const lib = loadLibrary();
-  lib[name] = libPhotoDataUrl;
+  if(!lib[name]) lib[name] = [];
+  lib[name].push(libPhotoDataUrl);
   saveLibrary(lib);
 
   // limpa o formulário
