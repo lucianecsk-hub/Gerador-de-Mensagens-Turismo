@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de Mensagens — Guia Prático Lucris</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Msgs Tour">
+<meta name="theme-color" content="#1F2B38">
+
+<style>
+  :root{
+    --rock:#9A4A2E;
+    --rock-dark:#6E3220;
+    --sand:#EFE4CC;
+    --sand-dark:#DCCBA1;
+    --night:#1F2B38;
+    --night-2:#2C3D4F;
+    --ok:#3E6B4F;
+    --paper:#FFFDF8;
+    --ink:#26201A;
+    --ink-soft:#6B6055;
+    --line:#E3D6B8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--sand);
+    color:var(--ink);
+    padding-bottom:40px;
+  }
+  header{
+    background:var(--night);
+    color:var(--sand);
+    padding:22px 18px 18px;
+  }
+  header h1{
+    margin:0 0 4px;
+    font-size:19px;
+    font-weight:700;
+    letter-spacing:0.3px;
+  }
+  header p{
+    margin:0;
+    font-size:13px;
+    color:#B9C4CE;
+  }
+  .wrap{
+    max-width:520px;
+    margin:0 auto;
+    padding:16px;
+  }
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:16px;
+  }
+  .card h2{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.8px;
+    color:var(--rock);
+    margin:0 0 12px;
+    font-weight:700;
+  }
+  .row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .field{margin-bottom:10px;}
+  .field.full{grid-column:1/-1;}
+  label{
+    display:block;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+    font-weight:600;
+  }
+  select{
+    width:100%;
+    padding:10px 11px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:14.5px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .pickup-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 6px;
+    border-bottom:1px solid var(--line);
+    font-size:13px;
+  }
+  .pickup-item img{
+    width:38px;
+    height:38px;
+    object-fit:cover;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .pickup-item span{
+    flex:1;
+    color:var(--ink);
+  }
+  input[type=text], input[type=date]{
+    width:100%;
+    padding:10px 11px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:14.5px;
+    background:#fff;
+    color:var(--ink);
+  }
+  input:focus{outline:2px solid var(--rock); outline-offset:1px;}
+  .photo-box{
+    border:1.5px dashed var(--line);
+    border-radius:10px;
+    padding:14px;
+    text-align:center;
+    background:#fff;
+    position:relative;
+  }
+  .photo-box img{
+    max-width:100%;
+    max-height:220px;
+    border-radius:8px;
+    margin-top:10px;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .photo-box input[type=file]{
+    font-size:12.5px;
+    width:100%;
+  }
+  .file-btn{
+    display:block;
+    padding:12px;
+    border-radius:9px;
+    border:1.5px solid var(--rock);
+    background:#fff;
+    color:var(--rock-dark);
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    text-align:center;
+  }
+  .file-btn:active{background:var(--sand);}
+  .lang-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:6px;
+    margin-bottom:14px;
+  }
+  .lang-tabs button{
+    padding:9px 4px;
+    border-radius:8px;
+    border:1.5px solid var(--line);
+    background:#fff;
+    color:var(--ink-soft);
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .lang-tabs button.active{
+    background:var(--rock);
+    border-color:var(--rock);
+    color:#fff;
+  }
+  .preview{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px;
+    font-size:13.5px;
+    line-height:1.55;
+    white-space:pre-wrap;
+    word-break:break-word;
+    max-height:420px;
+    overflow-y:auto;
+  }
+  .preview b{color:var(--rock-dark);}
+  .actions{
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+  }
+  .btn{
+    flex:1;
+    padding:12px;
+    border-radius:9px;
+    border:none;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .btn-primary{background:var(--rock); color:#fff;}
+  .btn-primary:active{background:var(--rock-dark);}
+  .btn-secondary{background:var(--night); color:var(--sand);}
+  .btn-secondary:active{background:var(--night-2);}
+  .hint{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:8px;
+    line-height:1.4;
+  }
+  .copied-msg{
+    display:none;
+    font-size:12.5px;
+    color:var(--ok);
+    font-weight:700;
+    margin-top:8px;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📋 Gerador de Mensagens de Tour</h1>
+  <p>Guia Prático Lucris — preencha os dados do serviço e gere a mensagem pronta em 4 idiomas</p>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <h2>Dados do serviço</h2>
+    <div class="row">
+      <div class="field">
+        <label>Nome do guia</label>
+        <input type="text" id="f_guide" value="Daniel">
+      </div>
+      <div class="field">
+        <label>Tour</label>
+        <select id="f_tour">
+          <option value="Grand Canyon West">Grand Canyon West</option>
+          <option value="Valle da Morte">Valle da Morte</option>
+          <option value="Valle da morte com Area 51">Valle da morte com Area 51</option>
+          <option value="Red Rock Canyon">Red Rock Canyon</option>
+          <option value="Valle do Fogo">Valle do Fogo</option>
+          <option value="Zion National Park">Zion National Park</option>
+          <option value="Brice">Brice</option>
+          <option value="Zion + Brice">Zion + Brice</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Dia</label>
+        <input type="text" id="f_day" placeholder="04/21" value="04/21">
+      </div>
+      <div class="field">
+        <label>Horário</label>
+        <input type="text" id="f_hour" placeholder="5:40am" value="5:40am">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Hotel</label>
+        <select id="f_hotel">
+          <option value="">— selecionar —</option>
+        </select>
+        <input type="text" id="f_hotel_custom" placeholder="Nome do hotel" style="display:none; margin-top:6px;">
+      </div>
+      <div class="field">
+        <label>Porta / ponto</label>
+        <select id="f_door">
+          <option value="Entrada principal/Lobby">Entrada principal/Lobby</option>
+          <option value="Tour bus / Uber">Tour bus / Uber</option>
+          <option value="Tour bus">Tour bus</option>
+          <option value="Uber">Uber</option>
+          <option value="Outro (digitar)">Outro (digitar)</option>
+        </select>
+        <input type="text" id="f_door_custom" placeholder="Descreva o ponto" style="display:none; margin-top:6px;">
+      </div>
+    </div>
+    <div class="row" id="temp_default_row">
+      <div class="field">
+        <label>Temperatura (°C — converte pra °F em inglês)</label>
+        <input type="text" id="f_tempc" value="17">
+      </div>
+    </div>
+    <div class="field full" id="temp_default_place">
+      <label>Nome do local (temperatura)</label>
+      <input type="text" id="f_place" value="Cañón West">
+    </div>
+    <div class="row" id="temp_valle_row" style="display:none;">
+      <div class="field">
+        <label>Temperatura mínima °C</label>
+        <input type="text" id="f_tempmin" value="34">
+      </div>
+      <div class="field">
+        <label>Temperatura máxima °C</label>
+        <input type="text" id="f_tempmax" value="50">
+      </div>
+    </div>
+    <div class="row" id="tip_arrival_row" style="display:none;">
+      <div class="field">
+        <label>Gorjeta sugerida (USD)</label>
+        <input type="text" id="f_tip" value="15">
+      </div>
+      <div class="field" id="arrival_field">
+        <label>Chegada em Vegas (aprox.)</label>
+        <input type="text" id="f_arrival" value="4:00 de la tarde">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Foto do ponto de encontro</h2>
+
+    <div class="hint" style="margin-top:0; margin-bottom:12px;">A foto aqui é salva vinculada ao hotel escolhido acima. Na próxima mensagem para esse mesmo hotel, ela carrega sozinha.</div>
+
+    <div class="photo-box">
+      <img id="photo_preview" style="display:none;">
+      <label for="f_photo" class="file-btn">📷 Escolher foto</label>
+      <input type="file" id="f_photo" accept="image/*" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;">
+    </div>
+
+    <div class="actions" style="margin-top:10px;">
+      <button class="btn btn-secondary" id="save_pickup_btn">Salvar foto para este hotel</button>
+      <button class="btn btn-secondary" id="delete_pickup_btn">Excluir foto deste hotel</button>
+    </div>
+
+    <div id="pickup_list" style="margin-top:12px;"></div>
+
+    <div class="hint">Envie a mensagem de texto e a foto como dois envios separados no WhatsApp — o botão "Baixar foto" ajuda a reenviá-la rápido.</div>
+  </div>
+
+  <div class="card">
+    <h2>Mensagem gerada</h2>
+    <div class="lang-tabs">
+      <button class="lang-btn active" data-lang="es">Español</button>
+      <button class="lang-btn" data-lang="pt">Português</button>
+      <button class="lang-btn" data-lang="en">English</button>
+      <button class="lang-btn" data-lang="it">Italiano</button>
+    </div>
+    <div class="preview" id="preview"></div>
+    <div class="actions">
+      <button class="btn btn-primary" id="copy_btn">Copiar texto</button>
+      <button class="btn btn-secondary" id="photo_dl_btn">Baixar foto</button>
+    </div>
+    <div class="copied-msg" id="copied_msg">Copiado ✓</div>
+  </div>
+
+</div>
+
+<script>
+const ids = ['f_guide','f_tour','f_day','f_hour','f_hotel','f_door','f_tempc','f_place','f_tempmin','f_tempmax','f_tip','f_arrival'];
+let currentLang = 'es';
+let photoDataUrl = null;
+let photoIsAuto = false;
+
+const HOTELS = [
+  'Aria',
+  'Bellagio',
+  'Caesars Palace',
+  'Circa',
+  'Circus Circus',
+  'Cosmopolitan',
+  'Delano',
+  'Downtown Grand',
+  'Encore',
+  'Excalibur',
+  'Flamingo',
+  'Fontainebleau',
+  'Four Seasons',
+  'Golden Nugget',
+  'Harrah\'s',
+  'Horseshoe',
+  'Luxor',
+  'Mandalay Bay',
+  'MGM Grand',
+  'New York-New York',
+  'Palazzo',
+  'Paris',
+  'Park MGM',
+  'Planet Hollywood',
+  'Plaza',
+  'Resorts World',
+  'Rio',
+  'Sahara',
+  'The D',
+  'The LINQ',
+  'Treasure Island (TI)',
+  'Tuscany',
+  'Vdara',
+  'Venetian',
+  'Waldorf Astoria',
+  'Westgate',
+  'Wynn',
+  'Outro (digitar)'
+];
+
+function populateHotelSelect(){
+  const select = document.getElementById('f_hotel');
+  select.innerHTML = '<option value="">— selecionar —</option>';
+  HOTELS.forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    select.appendChild(opt);
+  });
+}
+
+function cToF(c){
+  const n = parseFloat(String(c).replace(',', '.'));
+  if(isNaN(n)) return c;
+  return Math.round(n * 9/5 + 32);
+}
+
+const VALLE_TOURS = ['Valle da Morte', 'Valle da morte com Area 51'];
+const GRANDCANYON_TOURS = ['Grand Canyon West'];
+
+function getTourGroup(tour){
+  if(VALLE_TOURS.includes(tour)) return 'valle';
+  if(GRANDCANYON_TOURS.includes(tour)) return 'grandcanyon';
+  return 'default';
+}
+
+const GROUP_DEFAULT_TIP = { valle: '15', grandcanyon: '10' };
+let lastGroup = null;
+
+function toggleTempFields(){
+  const tour = document.getElementById('f_tour').value;
+  const group = getTourGroup(tour);
+  const isRange = (group === 'valle' || group === 'grandcanyon');
+
+  document.getElementById('temp_default_row').style.display = isRange ? 'none' : 'grid';
+  document.getElementById('temp_default_place').style.display = isRange ? 'none' : 'block';
+  document.getElementById('temp_valle_row').style.display = isRange ? 'grid' : 'none';
+  document.getElementById('tip_arrival_row').style.display = isRange ? 'grid' : 'none';
+  document.getElementById('arrival_field').style.display = (group === 'grandcanyon') ? 'block' : 'none';
+
+  if(group !== lastGroup && GROUP_DEFAULT_TIP[group]){
+    document.getElementById('f_tip').value = GROUP_DEFAULT_TIP[group];
+  }
+  lastGroup = group;
+}
+
+const LIB_KEY = 'lucris_pickup_library_v1';
+
+function loadLibrary(){
+  try{
+    return JSON.parse(localStorage.getItem(LIB_KEY)) || {};
+  }catch(err){
+    return {};
+  }
+}
+
+function saveLibrary(lib){
+  try{
+    localStorage.setItem(LIB_KEY, JSON.stringify(lib));
+  }catch(err){
+    alert('Não foi possível salvar a biblioteca neste navegador.');
+  }
+}
+
+function refreshPickupUI(){
+  const lib = loadLibrary();
+  const list = document.getElementById('pickup_list');
+  list.innerHTML = '';
+  Object.keys(lib).sort().forEach(name => {
+    const row = document.createElement('div');
+    row.className = 'pickup-item';
+    row.innerHTML = `<img src="${lib[name]}"><span>${name}</span>`;
+    list.appendChild(row);
+  });
+}
+
+function getFields(){
+  const o = {};
+  ids.forEach(id => o[id.replace('f_','')] = document.getElementById(id).value.trim());
+  if(o.hotel === 'Outro (digitar)'){
+    o.hotel = document.getElementById('f_hotel_custom').value.trim();
+  }
+  if(o.door === 'Outro (digitar)'){
+    o.door = document.getElementById('f_door_custom').value.trim();
+  }
+  return o;
+}
+
+const templates = { default: {}, valle: {}, grandcanyon: {} };
+
+templates.default.es = f => `Hola.
+
+Mi nombre es ${f.guide} y seré tu guía en el tour para el ${f.tour}.
+
+🏜 Servicio:
+Dia.        ${f.day}
+Hotel:    ${f.hotel}
+Puerta:  ${f.door}
+Hora:      ${f.hour}
+
+Temperatura ${f.place}: ${f.tempDisplay}°${f.tempUnit}
+
+**********************
+Por favor confirme que este es su hotel
+**********************
+
+🎲 Apreciado cliente, bienvenido a Las Vegas!
+
+Telefono de emergencia
++1 (702) 359-7699
+
+LAS  VEGAS  VIP  SERVICES 
+Siempre a su servicio 😊
+
+♠️ ♥️ ♣️ ♦️ ♠️ ♥️ ♣️ ♦️
+
+PROPINAS EN USA
+
+MENSAJE INFORMATIVO
+Estimado cliente, le informamos que en su servicio no esta incluida la propina, la cual es cultural en USA.
+
+Sugerimos que si el servicio ha sido de su satisfacción y tuviste UN LINDO DÍA la propina normal es $15.00 por persona.
+
+GRACIAS  POR  SU VISITA 😀!
+
+⚠️MUY IMPORTANTE⚠️
+Rogamos puntualidad
+
+Llegar tarde puede ocasionar la pérdida del tour. Le recomendamos asegurarse bien del punto de encuentro y de estar 4 minutos antes del horario designado.
+
+Es responsabilidad del cliente localizar el punto de encuentro, aconsejamos hacerlo un día antes.
+
+🤳Deberán de tener sus celulares operativos.
+
+🚧En ocasiones y por circunstancias de tráfico, obras pueden existir demoras en la recogida, no se preocupen siempre llegamos.
+
+❌ SI NO CONFIRMAN Y NO ESTÁN EN EL LUGAR DE RECOGIDA A LA HORA INDICADA, PUEDE OCASIONAR LA PÉRDIDA DEL TOUR!
+
+☕ Haremos una parada para el café.
+🍽️ Almuerzo incluido en el tour.
+
+Si tienes alguna pregunta por favor no dudes en contactarme!
+
+Gracias,  Luci🌹`;
+
+templates.default.pt = f => `Olá!
+
+Meu nome é ${f.guide} e serei seu guia no tour para ${f.tour}.
+
+🏜 Serviço:
+Dia:         ${f.day}
+Hotel:     ${f.hotel}
+Porta:     ${f.door}
+Horário: ${f.hour}
+
+Temperatura ${f.place}: ${f.tempDisplay}°${f.tempUnit}
+
+**********************
+Por favor, confirme se este é o seu hotel
+**********************
+
+🎲 Prezado cliente, bem-vindo a Las Vegas!
+
+Telefone de emergência
++1 (702) 359-7699
+
+LAS  VEGAS  VIP  SERVICES
+Sempre à sua disposição 😊
+
+♠️ ♥️ ♣️ ♦️ ♠️ ♥️ ♣️ ♦️
+
+GORJETAS NOS EUA
+
+MENSAGEM INFORMATIVA
+Prezado cliente, informamos que a gorjeta não está incluída no seu serviço, sendo esta uma prática cultural nos EUA.
+
+Sugerimos que, se o serviço foi de sua satisfação e você teve um ótimo dia, a gorjeta normal é de $15,00 por pessoa.
+
+OBRIGADO  PELA  SUA  VISITA 😀!
+
+⚠️MUITO IMPORTANTE⚠️
+Pedimos pontualidade
+
+Chegar atrasado pode ocasionar a perda do tour. Recomendamos que se certifique bem do ponto de encontro e que esteja 4 minutos antes do horário marcado.
+
+É responsabilidade do cliente localizar o ponto de encontro; aconselhamos fazer isso um dia antes.
+
+🤳Vocês deverão estar com os celulares operando normalmente.
+
+🚧Em algumas ocasiões, por causa do trânsito ou obras, podem ocorrer atrasos na recolha; não se preocupem, sempre chegamos.
+
+❌ SE NÃO CONFIRMAREM E NÃO ESTIVEREM NO LOCAL DE RECOLHA NO HORÁRIO INDICADO, ISSO PODE OCASIONAR A PERDA DO TOUR!
+
+☕ Faremos uma parada para o café.
+🍽️ Almoço incluído no tour.
+
+Se tiver alguma dúvida, não hesite em me contatar!
+
+Obrigado,  Luci🌹`;
+
+templates.default.en = f => `Hello!
+
+My name is ${f.guide} and I will be your guide on the ${f.tour} tour.
+
+🏜 Service:
+Day:      ${f.day}
+Hotel:    ${f.hotel}
+Door:     ${f.door}
+Time:     ${f.hour}
+
+${f.place} Temperature: ${f.tempDisplay}°${f.tempUnit}
+
+**********************
+Please confirm this is your hotel
+**********************
+
+🎲 Dear guest, welcome to Las Vegas!
+
+Emergency phone
++1 (702) 359-7699
+
+LAS  VEGAS  VIP  SERVICES
+Always at your service 😊
+
+♠️ ♥️ ♣️ ♦️ ♠️ ♥️ ♣️ ♦️
+
+TIPS IN THE USA
+
+INFORMATIVE MESSAGE
+Dear guest, please note that gratuity is not included in your service, as tipping is customary in the USA.
+
+If you enjoyed the service and had a great day, we suggest a standard tip of $15.00 per person.
+
+THANK  YOU  FOR  YOUR  VISIT 😀!
+
+⚠️VERY IMPORTANT⚠️
+Please be punctual
+
+Arriving late may result in losing your spot on the tour. We recommend making sure you know the meeting point and being there 4 minutes before the scheduled time.
+
+It is the client's responsibility to locate the meeting point; we recommend doing so a day in advance.
+
+🤳Please make sure your cell phones are working.
+
+🚧Occasionally, due to traffic or roadwork, pickup delays may occur; don't worry, we always arrive.
+
+❌ IF YOU DO NOT CONFIRM AND ARE NOT AT THE PICKUP LOCATION AT THE INDICATED TIME, YOU MAY LOSE YOUR TOUR!
+
+☕ We will make a coffee stop.
+🍽️ Lunch included in the tour.
+
+If you have any questions, please don't hesitate to contact me!
+
+Thank you,  Luci🌹`;
+
+templates.default.it = f => `Ciao!
+
+Mi chiamo ${f.guide} e sarò la tua guida nel tour ${f.tour}.
+
+🏜 Servizio:
+Giorno: ${f.day}
+Hotel:    ${f.hotel}
+Porta:    ${f.door}
+Ora:       ${f.hour}
+
+Temperatura ${f.place}: ${f.tempDisplay}°${f.tempUnit}
+
+**********************
+Per favore conferma che questo è il tuo hotel
+**********************
+
+🎲 Gentile cliente, benvenuto a Las Vegas!
+
+Telefono di emergenza
++1 (702) 359-7699
+
+LAS  VEGAS  VIP  SERVICES
+Sempre al tuo servizio 😊
+
+♠️ ♥️ ♣️ ♦️ ♠️ ♥️ ♣️ ♦️
+
+MANCE NEGLI USA
+
+MESSAGGIO INFORMATIVO
+Gentile cliente, la informiamo che la mancia non è inclusa nel servizio, essendo una pratica culturale negli USA.
+
+Se il servizio è stato di suo gradimento e ha trascorso una bella giornata, suggeriamo una mancia standard di $15,00 a persona.
+
+GRAZIE  PER  LA  VISITA 😀!
+
+⚠️MOLTO IMPORTANTE⚠️
+Vi preghiamo di essere puntuali
+
+Arrivare in ritardo può comportare la perdita del tour. Vi consigliamo di verificare bene il punto d'incontro e di essere presenti 4 minuti prima dell'orario stabilito.
+
+È responsabilità del cliente individuare il punto d'incontro; consigliamo di farlo un giorno prima.
+
+🤳Assicuratevi che i vostri cellulari siano funzionanti.
+
+🚧In alcune occasioni, a causa del traffico o di lavori stradali, potrebbero verificarsi ritardi nel ritiro; non preoccupatevi, arriviamo sempre.
+
+❌ SE NON CONFERMATE E NON SIETE NEL PUNTO DI RITIRO ALL'ORARIO INDICATO, POTRESTE PERDERE IL TOUR!
+
+☕ Faremo una sosta per il caffè.
+🍽️ Pranzo incluso nel tour.
+
+Se avete domande, non esitate a contattarmi!
+
+Grazie,  Luci🌹`;
+
+templates.valle.es = f => `🏜️ Bienvenido a Las Vegas!!
+
+Soy *${f.guide}*, tu guía para el tour a *${f.tour}*!
+📋 Por favor, lee toda la información y contesta *OK*. ¡Gracias!
+
+➖➖➖➖➖➖➖➖➖➖
+📅 Día: *${f.day}*
+🏨 Hotel: *${f.hotel}*
+🚪 Puerta: *${f.door}*
+⏰ Hora: *${f.hour}*
+🌡️ Temperatura en el Valle: *${f.tempMinDisplay}° a ${f.tempMaxDisplay}°${f.tempUnit}*
+➖➖➖➖➖➖➖➖➖➖
+
+💵 *INFORMATIVO PROPINAS EN USA*
+Estimado cliente, le informamos que en su servicio no está incluida la propina. Si el servicio fue de su agrado, lo habitual es a partir de $15 dólares por persona. ¡Gracias!
+
+📍 Es responsabilidad del cliente localizar el punto de encuentro. Aconsejamos hacerlo la noche previa al tour.
+
+✅ *Consejos rápidos para aprovechar al máximo el día:*
+🚫 No está permitido beber ni llevar alcohol en la camioneta/coche.
+👕 Use ropa de colores brillantes para obtener mejores fotos.
+🕶️ Traiga gafas de sol, protector solar y sombrero.
+👟 Los zapatos cómodos para caminar son indispensables (evite tacones o zapatillas).
+🔋 Asegúrese de que su teléfono/cámara esté completamente cargado.
+⛽ También nos detendremos en una gasolinera si desea comprar algo.
+
+📞 Teléfono de emergencia: *+1 (702) 359-7699*
+
+👥 Si estás en un grupo, comparte este mensaje con ellos para que todos tengan la información.
+
+🙏 GRACIAS POR SU VISITA 😀👍`;
+
+templates.valle.pt = f => `🏜️ Bem-vindo a Las Vegas!!
+
+Sou *${f.guide}*, seu guia para o tour ao *${f.tour}*!
+📋 Por favor, leia todas as informações e responda *OK*. Obrigado!
+
+➖➖➖➖➖➖➖➖➖➖
+📅 Dia: *${f.day}*
+🏨 Hotel: *${f.hotel}*
+🚪 Porta: *${f.door}*
+⏰ Horário: *${f.hour}*
+🌡️ Temperatura no Vale: *${f.tempMinDisplay}° a ${f.tempMaxDisplay}°${f.tempUnit}*
+➖➖➖➖➖➖➖➖➖➖
+
+💵 *INFORMATIVO SOBRE GORJETAS NOS EUA*
+Prezado cliente, informamos que a gorjeta não está incluída no seu serviço. Se o serviço foi do seu agrado, o habitual é a partir de $15 dólares por pessoa. Obrigado!
+
+📍 É responsabilidade do cliente localizar o ponto de encontro. Aconselhamos fazer isso na noite anterior ao tour.
+
+✅ *Dicas rápidas para aproveitar ao máximo o dia:*
+🚫 Não é permitido beber ou levar álcool na van/carro.
+👕 Use roupas de cores vivas para fotos melhores.
+🕶️ Traga óculos de sol, protetor solar e chapéu.
+👟 Sapatos confortáveis para caminhar são indispensáveis (evite saltos ou chinelos).
+🔋 Certifique-se de que seu celular/câmera esteja totalmente carregado.
+⛽ Também faremos parada em um posto de gasolina caso queira comprar algo.
+
+📞 Telefone de emergência: *+1 (702) 359-7699*
+
+👥 Se você está em grupo, compartilhe esta mensagem com eles para que todos tenham a informação.
+
+🙏 OBRIGADO PELA SUA VISITA 😀👍`;
+
+templates.valle.en = f => `🏜️ Welcome to Las Vegas!!
+
+I'm *${f.guide}*, your guide for the *${f.tour}* tour!
+📋 Please read all the information and reply *OK*. Thank you!
+
+➖➖➖➖➖➖➖➖➖➖
+📅 Day: *${f.day}*
+🏨 Hotel: *${f.hotel}*
+🚪 Door: *${f.door}*
+⏰ Time: *${f.hour}*
+🌡️ Temperature in the Valley: *${f.tempMinDisplay}° to ${f.tempMaxDisplay}°${f.tempUnit}*
+➖➖➖➖➖➖➖➖➖➖
+
+💵 *TIPS INFORMATION IN THE USA*
+Dear guest, please note that gratuity is not included in your service. If you enjoyed the service, the standard is from $15 per person. Thank you!
+
+📍 It is the client's responsibility to locate the meeting point. We recommend doing so the night before the tour.
+
+✅ *Quick tips to make the most of the day:*
+🚫 Drinking or bringing alcohol in the van/car is not allowed.
+👕 Wear bright colored clothing for better photos.
+🕶️ Bring sunglasses, sunscreen and a hat.
+👟 Comfortable walking shoes are a must (avoid heels or sandals).
+🔋 Make sure your phone/camera is fully charged.
+⛽ We will also stop at a gas station if you'd like to buy something.
+
+📞 Emergency phone: *+1 (702) 359-7699*
+
+👥 If you're in a group, share this message with them so everyone has the information.
+
+🙏 THANK YOU FOR YOUR VISIT 😀👍`;
+
+templates.valle.it = f => `🏜️ Benvenuto a Las Vegas!!
+
+Sono *${f.guide}*, la tua guida per il tour a *${f.tour}*!
+📋 Ti preghiamo di leggere tutte le informazioni e rispondere *OK*. Grazie!
+
+➖➖➖➖➖➖➖➖➖➖
+📅 Giorno: *${f.day}*
+🏨 Hotel: *${f.hotel}*
+🚪 Porta: *${f.door}*
+⏰ Ora: *${f.hour}*
+🌡️ Temperatura nella Valle: *${f.tempMinDisplay}° a ${f.tempMaxDisplay}°${f.tempUnit}*
+➖➖➖➖➖➖➖➖➖➖
+
+💵 *INFORMAZIONI SULLE MANCE NEGLI USA*
+Gentile cliente, la informiamo che la mancia non è inclusa nel servizio. Se il servizio è stato di suo gradimento, l'importo abituale è a partire da $15 a persona. Grazie!
+
+📍 È responsabilità del cliente individuare il punto d'incontro. Consigliamo di farlo la sera prima del tour.
+
+✅ *Consigli rapidi per vivere al meglio la giornata:*
+🚫 Non è consentito bere o portare alcolici nel van/auto.
+👕 Indossa abiti dai colori vivaci per foto migliori.
+🕶️ Porta occhiali da sole, protezione solare e cappello.
+👟 Scarpe comode per camminare sono indispensabili (evita tacchi o infradito).
+🔋 Assicurati che telefono e fotocamera siano completamente carichi.
+⛽ Ci fermeremo anche in una stazione di servizio se desideri acquistare qualcosa.
+
+📞 Telefono di emergenza: *+1 (702) 359-7699*
+
+👥 Se sei in un gruppo, condividi questo messaggio con loro affinché tutti abbiano le informazioni.
+
+🙏 GRAZIE PER LA VISITA 😀👍`;
+
+templates.grandcanyon.es = f => `🏜️ Bienvenido a Las Vegas!!
+
+Soy *${f.guide}*, tu guía para el tour a *${f.tour}*!
+📋 Por favor, lee toda la información y contesta *OK*. ¡Gracias!
+
+⚠️ *IMPORTANTE*
+Favor de llegar 5 min antes en el lugar y hora indicados en este mensaje. Los retrasos pueden causar la pérdida del tour. ¡Gracias!
+
+➖➖➖➖➖➖➖➖➖➖
+📅 Día: *${f.day}*
+🏨 Hotel: *${f.hotel}*
+🚪 Puerta: *${f.door}*
+⏰ Hora: *${f.hour}*
+🌡️ Temperatura en el Cañón: *${f.tempMinDisplay}° a ${f.tempMaxDisplay}°${f.tempUnit}*
+➖➖➖➖➖➖➖➖➖➖
+
+💵 *INFORMATIVO PROPINAS EN USA*
+Estimado cliente, le informamos que en su servicio no está incluida la propina. Si el servicio fue de su agrado, lo habitual es a partir de $${f.tip} dólares por persona. ¡Gracias!
+
+📍 Es responsabilidad del cliente localizar el punto de encuentro. Aconsejamos hacerlo la noche previa al tour.
+
+🍽️ *Comidas*
+☕ Parada para el café.
+🚫 No se permite comer, beber ni traer alcohol dentro de la furgoneta/coche.
+🎒 No se permite entrar al parque con comida ni mochilas grandes. Solo agua, bolsos pequeños o cangureras.
+
+🕓 Llegada a Las Vegas alrededor de las *${f.arrival}*.
+
+📞 Teléfono de emergencia: *+1 (702) 359-7699*
+
+👥 Si estás en un grupo, comparte este mensaje con ellos para que todos tengan la información.
+
+🙏 GRACIAS POR SU VISITA 😀👍`;
+
+templates.grandcanyon.pt = f => `🏜️ Bem-vindo a Las Vegas!!
+
+Sou *${f.guide}*, seu guia para o tour ao *${f.tour}*!
+📋 Por favor, leia todas as informações e responda *OK*. Obrigado!
+
+⚠️ *IMPORTANTE*
+Por favor, chegue 5 min antes no local e horário indicados nesta mensagem. Atrasos podem causar a perda do tour. Obrigado!
+
+➖➖➖➖➖➖➖➖➖➖
+📅 Dia: *${f.day}*
+🏨 Hotel: *${f.hotel}*
+🚪 Porta: *${f.door}*
+⏰ Horário: *${f.hour}*
+🌡️ Temperatura no Cânion: *${f.tempMinDisplay}° a ${f.tempMaxDisplay}°${f.tempUnit}*
+➖➖➖➖➖➖➖➖➖➖
+
+💵 *INFORMATIVO SOBRE GORJETAS NOS EUA*
+Prezado cliente, informamos que a gorjeta não está incluída no seu serviço. Se o serviço foi do seu agrado, o habitual é a partir de $${f.tip} dólares por pessoa. Obrigado!
+
+📍 É responsabilidade do cliente localizar o ponto de encontro. Aconselhamos fazer isso na noite anterior ao tour.
+
+🍽️ *Refeições*
+☕ Parada para o café.
+🚫 Não é permitido comer, beber ou levar álcool dentro da van/carro.
+🎒 Não é permitido entrar no parque com comida ou mochilas grandes. Somente água, bolsas pequenas ou pochetes.
+
+🕓 Chegada em Las Vegas por volta das *${f.arrival}*.
+
+📞 Telefone de emergência: *+1 (702) 359-7699*
+
+👥 Se você está em grupo, compartilhe esta mensagem com eles para que todos tenham a informação.
+
+🙏 OBRIGADO PELA SUA VISITA 😀👍`;
+
+templates.grandcanyon.en = f => `🏜️ Welcome to Las Vegas!!
+
+I'm *${f.guide}*, your guide for the *${f.tour}* tour!
+📋 Please read all the information and reply *OK*. Thank you!
+
+⚠️ *IMPORTANT*
+Please arrive 5 min before the location and time indicated in this message. Delays may cause you to lose your spot on the tour. Thank you!
+
+➖➖➖➖➖➖➖➖➖➖
+📅 Day: *${f.day}*
+🏨 Hotel: *${f.hotel}*
+🚪 Door: *${f.door}*
+⏰ Time: *${f.hour}*
+🌡️ Temperature at the Canyon: *${f.tempMinDisplay}° to ${f.tempMaxDisplay}°${f.tempUnit}*
+➖➖➖➖➖➖➖➖➖➖
+
+💵 *TIPS INFORMATION IN THE USA*
+Dear guest, please note that gratuity is not included in your service. If you enjoyed the service, the standard is from $${f.tip} per person. Thank you!
+
+📍 It is the client's responsibility to locate the meeting point. We recommend doing so the night before the tour.
+
+🍽️ *Meals*
+☕ Coffee stop.
+🚫 Eating, drinking or bringing alcohol inside the van/car is not allowed.
+🎒 Entering the park with food or large backpacks is not allowed. Only water, small bags or fanny packs.
+
+🕓 Arrival in Las Vegas around *${f.arrival}*.
+
+📞 Emergency phone: *+1 (702) 359-7699*
+
+👥 If you're in a group, share this message with them so everyone has the information.
+
+🙏 THANK YOU FOR YOUR VISIT 😀👍`;
+
+templates.grandcanyon.it = f => `🏜️ Benvenuto a Las Vegas!!
+
+Sono *${f.guide}*, la tua guida per il tour a *${f.tour}*!
+📋 Ti preghiamo di leggere tutte le informazioni e rispondere *OK*. Grazie!
+
+⚠️ *IMPORTANTE*
+Ti preghiamo di arrivare 5 min prima nel luogo e orario indicati in questo messaggio. I ritardi possono causare la perdita del tour. Grazie!
+
+➖➖➖➖➖➖➖➖➖➖
+📅 Giorno: *${f.day}*
+🏨 Hotel: *${f.hotel}*
+🚪 Porta: *${f.door}*
+⏰ Ora: *${f.hour}*
+🌡️ Temperatura al Canyon: *${f.tempMinDisplay}° a ${f.tempMaxDisplay}°${f.tempUnit}*
+➖➖➖➖➖➖➖➖➖➖
+
+💵 *INFORMAZIONI SULLE MANCE NEGLI USA*
+Gentile cliente, la informiamo che la mancia non è inclusa nel servizio. Se il servizio è stato di suo gradimento, l'importo abituale è a partire da $${f.tip} a persona. Grazie!
+
+📍 È responsabilità del cliente individuare il punto d'incontro. Consigliamo di farlo la sera prima del tour.
+
+🍽️ *Pasti*
+☕ Sosta per il caffè.
+🚫 Non è consentito mangiare, bere o portare alcolici all'interno del van/auto.
+🎒 Non è consentito entrare nel parco con cibo o zaini grandi. Solo acqua, borse piccole o marsupi.
+
+🕓 Arrivo a Las Vegas intorno alle *${f.arrival}*.
+
+📞 Telefono di emergenza: *+1 (702) 359-7699*
+
+👥 Se sei in un gruppo, condividi questo messaggio con loro affinché tutti abbiano le informazioni.
+
+🙏 GRAZIE PER LA VISITA 😀👍`;
+
+function render(){
+  const f = getFields();
+  const tour = document.getElementById('f_tour').value;
+  const group = getTourGroup(tour);
+
+  f.tempUnit = currentLang === 'en' ? 'F' : 'C';
+  f.tempDisplay = currentLang === 'en' ? cToF(f.tempc) : f.tempc;
+  f.tempMinDisplay = currentLang === 'en' ? cToF(f.tempmin) : f.tempmin;
+  f.tempMaxDisplay = currentLang === 'en' ? cToF(f.tempmax) : f.tempmax;
+
+  const set = templates[group];
+  const text = set[currentLang](f);
+  document.getElementById('preview').textContent = text;
+}
+
+function applyHotelPhoto(){
+  const hotel = document.getElementById('f_hotel').value;
+  const custom = hotel === 'Outro (digitar)';
+  document.getElementById('f_hotel_custom').style.display = custom ? 'block' : 'none';
+
+  const lib = loadLibrary();
+  const name = custom ? document.getElementById('f_hotel_custom').value.trim() : hotel;
+
+  if(name && lib[name]){
+    photoDataUrl = lib[name];
+    photoIsAuto = true;
+    const img = document.getElementById('photo_preview');
+    img.src = photoDataUrl;
+    img.style.display = 'block';
+  }else if(photoIsAuto){
+    photoDataUrl = null;
+    photoIsAuto = false;
+    document.getElementById('photo_preview').style.display = 'none';
+  }
+}
+
+ids.forEach(id => document.getElementById(id).addEventListener('input', render));
+document.getElementById('f_tour').addEventListener('change', () => { toggleTempFields(); render(); });
+document.getElementById('f_hotel').addEventListener('change', () => { applyHotelPhoto(); render(); });
+document.getElementById('f_hotel_custom').addEventListener('input', () => { applyHotelPhoto(); render(); });
+
+function toggleDoorCustom(){
+  const val = document.getElementById('f_door').value;
+  document.getElementById('f_door_custom').style.display = (val === 'Outro (digitar)') ? 'block' : 'none';
+}
+document.getElementById('f_door').addEventListener('change', () => { toggleDoorCustom(); render(); });
+document.getElementById('f_door_custom').addEventListener('input', render);
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentLang = btn.dataset.lang;
+    render();
+  });
+});
+
+document.getElementById('f_photo').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    photoDataUrl = ev.target.result;
+    photoIsAuto = false;
+    const img = document.getElementById('photo_preview');
+    img.src = photoDataUrl;
+    img.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+});
+
+function getCurrentHotelName(){
+  const hotel = document.getElementById('f_hotel').value;
+  if(hotel === 'Outro (digitar)') return document.getElementById('f_hotel_custom').value.trim();
+  return hotel;
+}
+
+document.getElementById('save_pickup_btn').addEventListener('click', () => {
+  const name = getCurrentHotelName();
+  if(!name){
+    alert('Selecione um hotel (ou digite o nome) no topo primeiro.');
+    return;
+  }
+  if(!photoDataUrl){
+    alert('Escolha uma foto primeiro.');
+    return;
+  }
+  const lib = loadLibrary();
+  lib[name] = photoDataUrl;
+  saveLibrary(lib);
+  photoIsAuto = true;
+  refreshPickupUI();
+});
+
+document.getElementById('delete_pickup_btn').addEventListener('click', () => {
+  const name = getCurrentHotelName();
+  if(!name){
+    alert('Selecione um hotel no topo primeiro.');
+    return;
+  }
+  const lib = loadLibrary();
+  if(!lib[name]){
+    alert('Este hotel não tem foto salva.');
+    return;
+  }
+  delete lib[name];
+  saveLibrary(lib);
+  photoDataUrl = null;
+  photoIsAuto = false;
+  document.getElementById('photo_preview').style.display = 'none';
+  refreshPickupUI();
+});
+
+refreshPickupUI();
+
+document.getElementById('copy_btn').addEventListener('click', async () => {
+  const text = document.getElementById('preview').textContent;
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch(err){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  const msg = document.getElementById('copied_msg');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 1800);
+});
+
+document.getElementById('photo_dl_btn').addEventListener('click', () => {
+  if(!photoDataUrl){
+    alert('Carregue uma foto do ponto de encontro primeiro.');
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = photoDataUrl;
+  a.download = 'ponto-encontro.jpg';
+  a.click();
+});
+
+populateHotelSelect();
+toggleDoorCustom();
+toggleTempFields();
+render();
+</script>
+
+</body>
+</html>
