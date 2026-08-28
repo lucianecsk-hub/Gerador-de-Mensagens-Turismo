@@ -115,7 +115,7 @@
       <div class="row">
         <div class="field">
           <label>Dia</label>
-          <input type="text" id="f_day" placeholder="04/21" value="04/21">
+          <input type="date" id="f_day">
         </div>
         <div class="field">
           <label>Horário</label>
@@ -455,9 +455,17 @@ async function renderLibraryScreen(){
   });
 }
 
+function formatDayDisplay(isoDate){
+  if(!isoDate) return '';
+  const parts = isoDate.split('-');
+  if(parts.length !== 3) return isoDate;
+  return `${parts[1]}/${parts[2]}`;
+}
+
 function getFields(){
   const o = {};
   ids.forEach(id => o[id.replace('f_','')] = document.getElementById(id).value.trim());
+  o.day = formatDayDisplay(document.getElementById('f_day').value);
   if(o.hotel === 'Outro (digitar)') o.hotel = document.getElementById('f_hotel_custom').value.trim();
   if(o.door === 'Outro (digitar)') o.door = document.getElementById('f_door_custom').value.trim();
   return o;
@@ -1255,6 +1263,10 @@ populateLibHotelSelect();
 toggleDoorCustom();
 toggleTempFields();
 migrateOldLibraryIfNeeded().then(() => refreshPickupUI());
+
+const todayISO = new Date().toISOString().slice(0, 10);
+document.getElementById('f_day').value = todayISO;
+
 render();
 </script>
 
