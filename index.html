@@ -72,7 +72,7 @@
 
 <header>
   <h1>📋 Gerador de Mensagens de Tour</h1>
-  <p>Guia Prático Lucris — preencha os dados do serviço e gere a mensagem pronta em 4 idiomas</p>
+  <p>Preencha os dados do serviço e gere a mensagem pronta em 4 idiomas</p>
 </header>
 
 <div class="top-nav">
@@ -205,10 +205,29 @@
   <!-- ===== TELA BIBLIOTECA ===== -->
   <div class="screen" id="screen-biblioteca">
     <div class="card">
-      <h2>Biblioteca de fotos por hotel</h2>
-      <div class="hint" style="margin-top:0;margin-bottom:12px;">Todas as fotos salvas ficam guardadas aqui, neste navegador. Toque em Excluir pra remover uma.</div>
+      <h2>Adicionar foto à biblioteca</h2>
+      <div class="field">
+        <label>Hotel</label>
+        <select id="lib_hotel_select">
+          <option value="">— selecionar —</option>
+        </select>
+        <input type="text" id="lib_hotel_custom" placeholder="Nome do hotel" style="display:none; margin-top:6px;">
+      </div>
+      <div class="photo-box">
+        <img id="lib_photo_preview" style="display:none;">
+        <label for="lib_photo_input" class="file-btn">📷 Escolher foto</label>
+        <input type="file" id="lib_photo_input" accept="image/*" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;">
+      </div>
+      <div class="actions" style="margin-top:10px;">
+        <button class="btn btn-primary" id="lib_save_btn">Salvar na biblioteca</button>
+      </div>
+      <div class="copied-msg" id="lib_saved_msg">Salvo ✓</div>
+    </div>
+    <div class="card">
+      <h2>Fotos salvas por hotel</h2>
+      <div class="hint" style="margin-top:0;margin-bottom:12px;">Ao escolher esse hotel numa mensagem, a foto entra sozinha. Toque em Excluir pra remover uma.</div>
       <div id="lib_full_list"></div>
-      <div class="hint" id="lib_empty_msg" style="display:none;">Nenhuma foto salva ainda. Vá em Início, escolha um hotel e uma foto, e toque em "Salvar foto para este hotel".</div>
+      <div class="hint" id="lib_empty_msg" style="display:none;">Nenhuma foto salva ainda.</div>
     </div>
   </div>
 
@@ -1047,7 +1066,61 @@ document.getElementById('tpl_restore_btn').addEventListener('click', () => {
   render();
 });
 
+/* ===== FORMULÁRIO DE CADASTRO NA BIBLIOTECA ===== */
+let libPhotoDataUrl = null;
+
+function populateLibHotelSelect(){
+  const select = document.getElementById('lib_hotel_select');
+  select.innerHTML = '<option value="">— selecionar —</option>';
+  HOTELS.forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name; opt.textContent = name;
+    select.appendChild(opt);
+  });
+}
+
+document.getElementById('lib_hotel_select').addEventListener('change', () => {
+  const custom = document.getElementById('lib_hotel_select').value === 'Outro (digitar)';
+  document.getElementById('lib_hotel_custom').style.display = custom ? 'block' : 'none';
+});
+
+document.getElementById('lib_photo_input').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    libPhotoDataUrl = ev.target.result;
+    const img = document.getElementById('lib_photo_preview');
+    img.src = libPhotoDataUrl; img.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('lib_save_btn').addEventListener('click', () => {
+  const sel = document.getElementById('lib_hotel_select').value;
+  const name = sel === 'Outro (digitar)' ? document.getElementById('lib_hotel_custom').value.trim() : sel;
+  if(!name){ alert('Selecione um hotel (ou digite o nome) primeiro.'); return; }
+  if(!libPhotoDataUrl){ alert('Escolha uma foto primeiro.'); return; }
+  const lib = loadLibrary();
+  lib[name] = libPhotoDataUrl;
+  saveLibrary(lib);
+
+  // limpa o formulário
+  libPhotoDataUrl = null;
+  document.getElementById('lib_photo_preview').style.display = 'none';
+  document.getElementById('lib_photo_input').value = '';
+  document.getElementById('lib_hotel_select').value = '';
+  document.getElementById('lib_hotel_custom').value = '';
+  document.getElementById('lib_hotel_custom').style.display = 'none';
+
+  refreshPickupUI();
+  const msg = document.getElementById('lib_saved_msg');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 1800);
+});
+
 populateHotelSelect();
+populateLibHotelSelect();
 toggleDoorCustom();
 toggleTempFields();
 refreshPickupUI();
