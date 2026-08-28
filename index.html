@@ -11,215 +11,58 @@
 
 <style>
   :root{
-    --rock:#9A4A2E;
-    --rock-dark:#6E3220;
-    --sand:#EFE4CC;
-    --sand-dark:#DCCBA1;
-    --night:#1F2B38;
-    --night-2:#2C3D4F;
-    --ok:#3E6B4F;
-    --paper:#FFFDF8;
-    --ink:#26201A;
-    --ink-soft:#6B6055;
-    --line:#E3D6B8;
+    --rock:#9A4A2E; --rock-dark:#6E3220; --sand:#EFE4CC; --sand-dark:#DCCBA1;
+    --night:#1F2B38; --night-2:#2C3D4F; --ok:#3E6B4F; --paper:#FFFDF8;
+    --ink:#26201A; --ink-soft:#6B6055; --line:#E3D6B8;
   }
   *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:var(--sand);
-    color:var(--ink);
-    padding-bottom:40px;
-  }
-  header{
-    background:var(--night);
-    color:var(--sand);
-    padding:22px 18px 18px;
-  }
-  header h1{
-    margin:0 0 4px;
-    font-size:19px;
-    font-weight:700;
-    letter-spacing:0.3px;
-  }
-  header p{
-    margin:0;
-    font-size:13px;
-    color:#B9C4CE;
-  }
-  .wrap{
-    max-width:520px;
-    margin:0 auto;
-    padding:16px;
-  }
-  .card{
-    background:var(--paper);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:16px;
-    margin-bottom:16px;
-  }
-  .card h2{
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:0.8px;
-    color:var(--rock);
-    margin:0 0 12px;
-    font-weight:700;
-  }
-  .row{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-bottom:10px;
-  }
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--sand);color:var(--ink);padding-bottom:40px;}
+  header{background:var(--night);color:var(--sand);padding:22px 18px 18px;}
+  header h1{margin:0 0 4px;font-size:19px;font-weight:700;letter-spacing:0.3px;}
+  header p{margin:0;font-size:13px;color:#B9C4CE;}
+  .top-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--night-2);}
+  .top-nav button{padding:12px 4px;border:none;background:transparent;color:#B9C4CE;font-size:12.5px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;}
+  .top-nav button.active{color:#fff;border-bottom-color:var(--rock);}
+  .wrap{max-width:520px;margin:0 auto;padding:16px;}
+  .screen{display:none;}
+  .screen.active{display:block;}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;}
+  .card h2{font-size:12px;text-transform:uppercase;letter-spacing:0.8px;color:var(--rock);margin:0 0 12px;font-weight:700;}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
   .field{margin-bottom:10px;}
   .field.full{grid-column:1/-1;}
-  label{
-    display:block;
-    font-size:11.5px;
-    color:var(--ink-soft);
-    margin-bottom:4px;
-    font-weight:600;
-  }
-  select{
-    width:100%;
-    padding:10px 11px;
-    border:1px solid var(--line);
-    border-radius:8px;
-    font-size:14.5px;
-    background:#fff;
-    color:var(--ink);
-  }
-  .pickup-item{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:8px 6px;
-    border-bottom:1px solid var(--line);
-    font-size:13px;
-  }
-  .pickup-item img{
-    width:38px;
-    height:38px;
-    object-fit:cover;
-    border-radius:6px;
-    flex-shrink:0;
-  }
-  .pickup-item span{
-    flex:1;
-    color:var(--ink);
-  }
-  input[type=text], input[type=date]{
-    width:100%;
-    padding:10px 11px;
-    border:1px solid var(--line);
-    border-radius:8px;
-    font-size:14.5px;
-    background:#fff;
-    color:var(--ink);
-  }
-  input:focus{outline:2px solid var(--rock); outline-offset:1px;}
-  .photo-box{
-    border:1.5px dashed var(--line);
-    border-radius:10px;
-    padding:14px;
-    text-align:center;
-    background:#fff;
-    position:relative;
-  }
-  .photo-box img{
-    max-width:100%;
-    max-height:220px;
-    border-radius:8px;
-    margin-top:10px;
-    display:block;
-    margin-left:auto;
-    margin-right:auto;
-  }
-  .photo-box input[type=file]{
-    font-size:12.5px;
-    width:100%;
-  }
-  .file-btn{
-    display:block;
-    padding:12px;
-    border-radius:9px;
-    border:1.5px solid var(--rock);
-    background:#fff;
-    color:var(--rock-dark);
-    font-size:14px;
-    font-weight:700;
-    cursor:pointer;
-    text-align:center;
-  }
+  label{display:block;font-size:11.5px;color:var(--ink-soft);margin-bottom:4px;font-weight:600;}
+  select{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:8px;font-size:14.5px;background:#fff;color:var(--ink);}
+  .pickup-item{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid var(--line);font-size:13px;}
+  .pickup-item img{width:38px;height:38px;object-fit:cover;border-radius:6px;flex-shrink:0;}
+  .pickup-item span{flex:1;color:var(--ink);}
+  .lib-card{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px;}
+  .lib-card img{width:64px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0;}
+  .lib-card .lib-name{flex:1;font-size:14px;font-weight:600;}
+  .lib-del{background:var(--night);color:var(--sand);border:none;border-radius:7px;padding:8px 10px;font-size:12px;font-weight:700;cursor:pointer;}
+  input[type=text], input[type=date]{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:8px;font-size:14.5px;background:#fff;color:var(--ink);}
+  input:focus{outline:2px solid var(--rock);outline-offset:1px;}
+  .photo-box{border:1.5px dashed var(--line);border-radius:10px;padding:14px;text-align:center;background:#fff;position:relative;}
+  .photo-box img{max-width:100%;max-height:220px;border-radius:8px;margin-top:10px;display:block;margin-left:auto;margin-right:auto;}
+  .file-btn{display:block;padding:12px;border-radius:9px;border:1.5px solid var(--rock);background:#fff;color:var(--rock-dark);font-size:14px;font-weight:700;cursor:pointer;text-align:center;}
   .file-btn:active{background:var(--sand);}
-  .lang-tabs{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:6px;
-    margin-bottom:14px;
-  }
-  .lang-tabs button{
-    padding:9px 4px;
-    border-radius:8px;
-    border:1.5px solid var(--line);
-    background:#fff;
-    color:var(--ink-soft);
-    font-size:13px;
-    font-weight:700;
-    cursor:pointer;
-  }
-  .lang-tabs button.active{
-    background:var(--rock);
-    border-color:var(--rock);
-    color:#fff;
-  }
-  .preview{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:14px;
-    font-size:13.5px;
-    line-height:1.55;
-    white-space:pre-wrap;
-    word-break:break-word;
-    max-height:420px;
-    overflow-y:auto;
-  }
-  .preview b{color:var(--rock-dark);}
-  .actions{
-    display:flex;
-    gap:8px;
-    margin-top:12px;
-  }
-  .btn{
-    flex:1;
-    padding:12px;
-    border-radius:9px;
-    border:none;
-    font-size:14px;
-    font-weight:700;
-    cursor:pointer;
-  }
-  .btn-primary{background:var(--rock); color:#fff;}
+  .lang-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;}
+  .lang-tabs button{padding:9px 4px;border-radius:8px;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);font-size:13px;font-weight:700;cursor:pointer;}
+  .lang-tabs button.active{background:var(--rock);border-color:var(--rock);color:#fff;}
+  .group-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;}
+  .group-tabs button{padding:9px 4px;border-radius:8px;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);font-size:12px;font-weight:700;cursor:pointer;}
+  .group-tabs button.active{background:var(--night);border-color:var(--night);color:#fff;}
+  .preview{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:13.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;max-height:420px;overflow-y:auto;}
+  textarea.tpl-edit{width:100%;min-height:340px;border:1px solid var(--rock);border-radius:10px;padding:14px;font-size:13.5px;line-height:1.55;font-family:inherit;background:#fff;color:var(--ink);}
+  .actions{display:flex;gap:8px;margin-top:12px;}
+  .btn{flex:1;padding:12px;border-radius:9px;border:none;font-size:14px;font-weight:700;cursor:pointer;}
+  .btn-primary{background:var(--rock);color:#fff;}
   .btn-primary:active{background:var(--rock-dark);}
-  .btn-secondary{background:var(--night); color:var(--sand);}
+  .btn-secondary{background:var(--night);color:var(--sand);}
   .btn-secondary:active{background:var(--night-2);}
-  .hint{
-    font-size:11.5px;
-    color:var(--ink-soft);
-    margin-top:8px;
-    line-height:1.4;
-  }
-  .copied-msg{
-    display:none;
-    font-size:12.5px;
-    color:var(--ok);
-    font-weight:700;
-    margin-top:8px;
-    text-align:center;
-  }
+  .hint{font-size:11.5px;color:var(--ink-soft);margin-top:8px;line-height:1.4;}
+  .copied-msg{display:none;font-size:12.5px;color:var(--ok);font-weight:700;margin-top:8px;text-align:center;}
+  .badge{display:inline-block;font-size:10.5px;font-weight:700;background:var(--ok);color:#fff;padding:2px 8px;border-radius:20px;margin-left:6px;}
 </style>
 </head>
 <body>
@@ -229,126 +72,173 @@
   <p>Guia Prático Lucris — preencha os dados do serviço e gere a mensagem pronta em 4 idiomas</p>
 </header>
 
+<div class="top-nav">
+  <button class="nav-btn active" data-screen="inicio">🏠 Início</button>
+  <button class="nav-btn" data-screen="biblioteca">🖼️ Biblioteca</button>
+  <button class="nav-btn" data-screen="mensagens">✉️ Mensagens padrão</button>
+</div>
+
 <div class="wrap">
 
-  <div class="card">
-    <h2>Dados do serviço</h2>
-    <div class="row">
-      <div class="field">
-        <label>Nome do guia</label>
-        <input type="text" id="f_guide" value="Daniel">
+  <!-- ===== TELA INÍCIO ===== -->
+  <div class="screen active" id="screen-inicio">
+
+    <div class="card">
+      <h2>Dados do serviço</h2>
+      <div class="row">
+        <div class="field">
+          <label>Nome do guia</label>
+          <input type="text" id="f_guide" value="Daniel">
+        </div>
+        <div class="field">
+          <label>Tour</label>
+          <select id="f_tour">
+            <option value="Grand Canyon West">Grand Canyon West</option>
+            <option value="Valle da Morte">Valle da Morte</option>
+            <option value="Valle da morte com Area 51">Valle da morte com Area 51</option>
+            <option value="Red Rock Canyon">Red Rock Canyon</option>
+            <option value="Valle do Fogo">Valle do Fogo</option>
+            <option value="Zion National Park">Zion National Park</option>
+            <option value="Brice">Brice</option>
+            <option value="Zion + Brice">Zion + Brice</option>
+          </select>
+        </div>
       </div>
-      <div class="field">
-        <label>Tour</label>
-        <select id="f_tour">
-          <option value="Grand Canyon West">Grand Canyon West</option>
-          <option value="Valle da Morte">Valle da Morte</option>
-          <option value="Valle da morte com Area 51">Valle da morte com Area 51</option>
-          <option value="Red Rock Canyon">Red Rock Canyon</option>
-          <option value="Valle do Fogo">Valle do Fogo</option>
-          <option value="Zion National Park">Zion National Park</option>
-          <option value="Brice">Brice</option>
-          <option value="Zion + Brice">Zion + Brice</option>
-        </select>
+      <div class="row">
+        <div class="field">
+          <label>Dia</label>
+          <input type="text" id="f_day" placeholder="04/21" value="04/21">
+        </div>
+        <div class="field">
+          <label>Horário</label>
+          <input type="text" id="f_hour" placeholder="5:40am" value="5:40am">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Hotel</label>
+          <select id="f_hotel">
+            <option value="">— selecionar —</option>
+          </select>
+          <input type="text" id="f_hotel_custom" placeholder="Nome do hotel" style="display:none; margin-top:6px;">
+        </div>
+        <div class="field">
+          <label>Porta / ponto</label>
+          <select id="f_door">
+            <option value="Entrada principal/Lobby">Entrada principal/Lobby</option>
+            <option value="Tour bus / Uber">Tour bus / Uber</option>
+            <option value="Tour bus">Tour bus</option>
+            <option value="Uber">Uber</option>
+            <option value="Outro (digitar)">Outro (digitar)</option>
+          </select>
+          <input type="text" id="f_door_custom" placeholder="Descreva o ponto" style="display:none; margin-top:6px;">
+        </div>
+      </div>
+      <div class="row" id="temp_default_row">
+        <div class="field">
+          <label>Temperatura (°C — converte pra °F em inglês)</label>
+          <input type="text" id="f_tempc" value="17">
+        </div>
+      </div>
+      <div class="field full" id="temp_default_place">
+        <label>Nome do local (temperatura)</label>
+        <input type="text" id="f_place" value="Cañón West">
+      </div>
+      <div class="row" id="temp_valle_row" style="display:none;">
+        <div class="field">
+          <label>Temperatura mínima °C</label>
+          <input type="text" id="f_tempmin" value="34">
+        </div>
+        <div class="field">
+          <label>Temperatura máxima °C</label>
+          <input type="text" id="f_tempmax" value="50">
+        </div>
+      </div>
+      <div class="row" id="tip_arrival_row" style="display:none;">
+        <div class="field">
+          <label>Gorjeta sugerida (USD)</label>
+          <input type="text" id="f_tip" value="15">
+        </div>
+        <div class="field" id="arrival_field">
+          <label>Chegada em Vegas (aprox.)</label>
+          <input type="text" id="f_arrival" value="4:00 de la tarde">
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="field">
-        <label>Dia</label>
-        <input type="text" id="f_day" placeholder="04/21" value="04/21">
+
+    <div class="card">
+      <h2>Foto do ponto de encontro</h2>
+      <div class="hint" style="margin-top:0; margin-bottom:12px;">A foto aqui é salva vinculada ao hotel escolhido acima. Na próxima mensagem para esse mesmo hotel, ela carrega sozinha. Veja todas na aba <b>🖼️ Biblioteca</b>.</div>
+      <div class="photo-box">
+        <img id="photo_preview" style="display:none;">
+        <label for="f_photo" class="file-btn">📷 Escolher foto</label>
+        <input type="file" id="f_photo" accept="image/*" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;">
       </div>
-      <div class="field">
-        <label>Horário</label>
-        <input type="text" id="f_hour" placeholder="5:40am" value="5:40am">
+      <div class="actions" style="margin-top:10px;">
+        <button class="btn btn-secondary" id="save_pickup_btn">Salvar foto para este hotel</button>
+        <button class="btn btn-secondary" id="delete_pickup_btn">Excluir foto deste hotel</button>
       </div>
+      <div class="hint">Envie a mensagem de texto e a foto como dois envios separados no WhatsApp — o botão "Baixar foto" ajuda a reenviá-la rápido.</div>
     </div>
-    <div class="row">
-      <div class="field">
-        <label>Hotel</label>
-        <select id="f_hotel">
-          <option value="">— selecionar —</option>
-        </select>
-        <input type="text" id="f_hotel_custom" placeholder="Nome do hotel" style="display:none; margin-top:6px;">
+
+    <div class="card">
+      <h2>Mensagem gerada</h2>
+      <div class="lang-tabs">
+        <button class="lang-btn active" data-lang="es">Español</button>
+        <button class="lang-btn" data-lang="pt">Português</button>
+        <button class="lang-btn" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="it">Italiano</button>
       </div>
-      <div class="field">
-        <label>Porta / ponto</label>
-        <select id="f_door">
-          <option value="Entrada principal/Lobby">Entrada principal/Lobby</option>
-          <option value="Tour bus / Uber">Tour bus / Uber</option>
-          <option value="Tour bus">Tour bus</option>
-          <option value="Uber">Uber</option>
-          <option value="Outro (digitar)">Outro (digitar)</option>
-        </select>
-        <input type="text" id="f_door_custom" placeholder="Descreva o ponto" style="display:none; margin-top:6px;">
+      <div class="preview" id="preview"></div>
+      <div class="actions">
+        <button class="btn btn-primary" id="copy_btn">Copiar texto</button>
+        <button class="btn btn-secondary" id="photo_dl_btn">Baixar foto</button>
       </div>
+      <div class="copied-msg" id="copied_msg">Copiado ✓</div>
     </div>
-    <div class="row" id="temp_default_row">
-      <div class="field">
-        <label>Temperatura (°C — converte pra °F em inglês)</label>
-        <input type="text" id="f_tempc" value="17">
-      </div>
-    </div>
-    <div class="field full" id="temp_default_place">
-      <label>Nome do local (temperatura)</label>
-      <input type="text" id="f_place" value="Cañón West">
-    </div>
-    <div class="row" id="temp_valle_row" style="display:none;">
-      <div class="field">
-        <label>Temperatura mínima °C</label>
-        <input type="text" id="f_tempmin" value="34">
-      </div>
-      <div class="field">
-        <label>Temperatura máxima °C</label>
-        <input type="text" id="f_tempmax" value="50">
-      </div>
-    </div>
-    <div class="row" id="tip_arrival_row" style="display:none;">
-      <div class="field">
-        <label>Gorjeta sugerida (USD)</label>
-        <input type="text" id="f_tip" value="15">
-      </div>
-      <div class="field" id="arrival_field">
-        <label>Chegada em Vegas (aprox.)</label>
-        <input type="text" id="f_arrival" value="4:00 de la tarde">
-      </div>
+
+  </div>
+
+  <!-- ===== TELA BIBLIOTECA ===== -->
+  <div class="screen" id="screen-biblioteca">
+    <div class="card">
+      <h2>Biblioteca de fotos por hotel</h2>
+      <div class="hint" style="margin-top:0;margin-bottom:12px;">Todas as fotos salvas ficam guardadas aqui, neste navegador. Toque em Excluir pra remover uma.</div>
+      <div id="lib_full_list"></div>
+      <div class="hint" id="lib_empty_msg" style="display:none;">Nenhuma foto salva ainda. Vá em Início, escolha um hotel e uma foto, e toque em "Salvar foto para este hotel".</div>
     </div>
   </div>
 
-  <div class="card">
-    <h2>Foto do ponto de encontro</h2>
-
-    <div class="hint" style="margin-top:0; margin-bottom:12px;">A foto aqui é salva vinculada ao hotel escolhido acima. Na próxima mensagem para esse mesmo hotel, ela carrega sozinha.</div>
-
-    <div class="photo-box">
-      <img id="photo_preview" style="display:none;">
-      <label for="f_photo" class="file-btn">📷 Escolher foto</label>
-      <input type="file" id="f_photo" accept="image/*" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;">
+  <!-- ===== TELA MENSAGENS PADRÃO ===== -->
+  <div class="screen" id="screen-mensagens">
+    <div class="card">
+      <h2>Modelos de mensagem</h2>
+      <div class="group-tabs">
+        <button class="group-btn active" data-group="default">Genérico</button>
+        <button class="group-btn" data-group="valle">Valle da Morte</button>
+        <button class="group-btn" data-group="grandcanyon">Grand Canyon West</button>
+      </div>
+      <div class="lang-tabs">
+        <button class="mlang-btn active" data-lang="es">Español</button>
+        <button class="mlang-btn" data-lang="pt">Português</button>
+        <button class="mlang-btn" data-lang="en">English</button>
+        <button class="mlang-btn" data-lang="it">Italiano</button>
+      </div>
+      <div class="hint" style="margin-top:0;margin-bottom:10px;">
+        Use estas variáveis no texto e elas serão preenchidas automaticamente: {{guide}} {{tour}} {{day}} {{hotel}} {{door}} {{hour}} {{place}} {{tempDisplay}} {{tempUnit}} {{tempMinDisplay}} {{tempMaxDisplay}} {{tip}} {{arrival}}
+        <span class="badge" id="override_badge" style="display:none;">Editado</span>
+      </div>
+      <div class="preview" id="tpl_view"></div>
+      <textarea class="tpl-edit" id="tpl_edit" style="display:none;"></textarea>
+      <div class="actions">
+        <button class="btn btn-secondary" id="tpl_edit_btn">Editar</button>
+        <button class="btn btn-primary" id="tpl_save_btn" style="display:none;">Salvar</button>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" id="tpl_restore_btn">Restaurar modelo padrão</button>
+      </div>
+      <div class="copied-msg" id="tpl_saved_msg">Salvo ✓</div>
     </div>
-
-    <div class="actions" style="margin-top:10px;">
-      <button class="btn btn-secondary" id="save_pickup_btn">Salvar foto para este hotel</button>
-      <button class="btn btn-secondary" id="delete_pickup_btn">Excluir foto deste hotel</button>
-    </div>
-
-    <div id="pickup_list" style="margin-top:12px;"></div>
-
-    <div class="hint">Envie a mensagem de texto e a foto como dois envios separados no WhatsApp — o botão "Baixar foto" ajuda a reenviá-la rápido.</div>
-  </div>
-
-  <div class="card">
-    <h2>Mensagem gerada</h2>
-    <div class="lang-tabs">
-      <button class="lang-btn active" data-lang="es">Español</button>
-      <button class="lang-btn" data-lang="pt">Português</button>
-      <button class="lang-btn" data-lang="en">English</button>
-      <button class="lang-btn" data-lang="it">Italiano</button>
-    </div>
-    <div class="preview" id="preview"></div>
-    <div class="actions">
-      <button class="btn btn-primary" id="copy_btn">Copiar texto</button>
-      <button class="btn btn-secondary" id="photo_dl_btn">Baixar foto</button>
-    </div>
-    <div class="copied-msg" id="copied_msg">Copiado ✓</div>
   </div>
 
 </div>
@@ -359,54 +249,14 @@ let currentLang = 'es';
 let photoDataUrl = null;
 let photoIsAuto = false;
 
-const HOTELS = [
-  'Aria',
-  'Bellagio',
-  'Caesars Palace',
-  'Circa',
-  'Circus Circus',
-  'Cosmopolitan',
-  'Delano',
-  'Downtown Grand',
-  'Encore',
-  'Excalibur',
-  'Flamingo',
-  'Fontainebleau',
-  'Four Seasons',
-  'Golden Nugget',
-  'Harrah\'s',
-  'Horseshoe',
-  'Luxor',
-  'Mandalay Bay',
-  'MGM Grand',
-  'New York-New York',
-  'Palazzo',
-  'Paris',
-  'Park MGM',
-  'Planet Hollywood',
-  'Plaza',
-  'Resorts World',
-  'Rio',
-  'Sahara',
-  'The D',
-  'The LINQ',
-  'Treasure Island (TI)',
-  'Tuscany',
-  'Vdara',
-  'Venetian',
-  'Waldorf Astoria',
-  'Westgate',
-  'Wynn',
-  'Outro (digitar)'
-];
+const HOTELS = ['Aria','Bellagio','Caesars Palace','Circa','Circus Circus','Cosmopolitan','Delano','Downtown Grand','Encore','Excalibur','Flamingo','Fontainebleau','Four Seasons','Golden Nugget','Harrah\'s','Horseshoe','Luxor','Mandalay Bay','MGM Grand','New York-New York','Palazzo','Paris','Park MGM','Planet Hollywood','Plaza','Resorts World','Rio','Sahara','The D','The LINQ','Treasure Island (TI)','Tuscany','Vdara','Venetian','Waldorf Astoria','Westgate','Wynn','Outro (digitar)'];
 
 function populateHotelSelect(){
   const select = document.getElementById('f_hotel');
   select.innerHTML = '<option value="">— selecionar —</option>';
   HOTELS.forEach(name => {
     const opt = document.createElement('option');
-    opt.value = name;
-    opt.textContent = name;
+    opt.value = name; opt.textContent = name;
     select.appendChild(opt);
   });
 }
@@ -419,7 +269,6 @@ function cToF(c){
 
 const VALLE_TOURS = ['Valle da Morte', 'Valle da morte com Area 51'];
 const GRANDCANYON_TOURS = ['Grand Canyon West'];
-
 function getTourGroup(tour){
   if(VALLE_TOURS.includes(tour)) return 'valle';
   if(GRANDCANYON_TOURS.includes(tour)) return 'grandcanyon';
@@ -428,18 +277,15 @@ function getTourGroup(tour){
 
 const GROUP_DEFAULT_TIP = { valle: '15', grandcanyon: '10' };
 let lastGroup = null;
-
 function toggleTempFields(){
   const tour = document.getElementById('f_tour').value;
   const group = getTourGroup(tour);
   const isRange = (group === 'valle' || group === 'grandcanyon');
-
   document.getElementById('temp_default_row').style.display = isRange ? 'none' : 'grid';
   document.getElementById('temp_default_place').style.display = isRange ? 'none' : 'block';
   document.getElementById('temp_valle_row').style.display = isRange ? 'grid' : 'none';
   document.getElementById('tip_arrival_row').style.display = isRange ? 'grid' : 'none';
   document.getElementById('arrival_field').style.display = (group === 'grandcanyon') ? 'block' : 'none';
-
   if(group !== lastGroup && GROUP_DEFAULT_TIP[group]){
     document.getElementById('f_tip').value = GROUP_DEFAULT_TIP[group];
   }
@@ -447,60 +293,73 @@ function toggleTempFields(){
 }
 
 const LIB_KEY = 'lucris_pickup_library_v1';
-
-function loadLibrary(){
-  try{
-    return JSON.parse(localStorage.getItem(LIB_KEY)) || {};
-  }catch(err){
-    return {};
-  }
-}
-
-function saveLibrary(lib){
-  try{
-    localStorage.setItem(LIB_KEY, JSON.stringify(lib));
-  }catch(err){
-    alert('Não foi possível salvar a biblioteca neste navegador.');
-  }
-}
+function loadLibrary(){ try{ return JSON.parse(localStorage.getItem(LIB_KEY)) || {}; }catch(err){ return {}; } }
+function saveLibrary(lib){ try{ localStorage.setItem(LIB_KEY, JSON.stringify(lib)); }catch(err){ alert('Não foi possível salvar a biblioteca neste navegador.'); } }
 
 function refreshPickupUI(){
   const lib = loadLibrary();
   const list = document.getElementById('pickup_list');
-  list.innerHTML = '';
-  Object.keys(lib).sort().forEach(name => {
+  if(list){
+    list.innerHTML = '';
+    Object.keys(lib).sort().forEach(name => {
+      const row = document.createElement('div');
+      row.className = 'pickup-item';
+      row.innerHTML = `<img src="${lib[name]}"><span>${name}</span>`;
+      list.appendChild(row);
+    });
+  }
+  renderLibraryScreen();
+}
+
+function renderLibraryScreen(){
+  const lib = loadLibrary();
+  const names = Object.keys(lib).sort();
+  const container = document.getElementById('lib_full_list');
+  const emptyMsg = document.getElementById('lib_empty_msg');
+  container.innerHTML = '';
+  emptyMsg.style.display = names.length ? 'none' : 'block';
+  names.forEach(name => {
     const row = document.createElement('div');
-    row.className = 'pickup-item';
-    row.innerHTML = `<img src="${lib[name]}"><span>${name}</span>`;
-    list.appendChild(row);
+    row.className = 'lib-card';
+    row.innerHTML = `<img src="${lib[name]}"><div class="lib-name">${name}</div><button class="lib-del" data-name="${name}">Excluir</button>`;
+    container.appendChild(row);
+  });
+  container.querySelectorAll('.lib-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const name = btn.dataset.name;
+      const lib2 = loadLibrary();
+      delete lib2[name];
+      saveLibrary(lib2);
+      refreshPickupUI();
+    });
   });
 }
 
 function getFields(){
   const o = {};
   ids.forEach(id => o[id.replace('f_','')] = document.getElementById(id).value.trim());
-  if(o.hotel === 'Outro (digitar)'){
-    o.hotel = document.getElementById('f_hotel_custom').value.trim();
-  }
-  if(o.door === 'Outro (digitar)'){
-    o.door = document.getElementById('f_door_custom').value.trim();
-  }
+  if(o.hotel === 'Outro (digitar)') o.hotel = document.getElementById('f_hotel_custom').value.trim();
+  if(o.door === 'Outro (digitar)') o.door = document.getElementById('f_door_custom').value.trim();
   return o;
 }
 
-const templates = { default: {}, valle: {}, grandcanyon: {} };
+function fillTemplate(str, f){
+  return str.replace(/\{\{(\w+)\}\}/g, (m, key) => (f[key] !== undefined ? f[key] : ''));
+}
 
-templates.default.es = f => `Hola.
+const DEFAULT_TEMPLATES = { default:{}, valle:{}, grandcanyon:{} };
 
-Mi nombre es ${f.guide} y seré tu guía en el tour para el ${f.tour}.
+DEFAULT_TEMPLATES.default.es = `Hola.
+
+Mi nombre es {{guide}} y seré tu guía en el tour para el {{tour}}.
 
 🏜 Servicio:
-Dia.        ${f.day}
-Hotel:    ${f.hotel}
-Puerta:  ${f.door}
-Hora:      ${f.hour}
+Dia.        {{day}}
+Hotel:    {{hotel}}
+Puerta:  {{door}}
+Hora:      {{hour}}
 
-Temperatura ${f.place}: ${f.tempDisplay}°${f.tempUnit}
+Temperatura {{place}}: {{tempDisplay}}°{{tempUnit}}
 
 **********************
 Por favor confirme que este es su hotel
@@ -545,17 +404,17 @@ Si tienes alguna pregunta por favor no dudes en contactarme!
 
 Gracias,  Luci🌹`;
 
-templates.default.pt = f => `Olá!
+DEFAULT_TEMPLATES.default.pt = `Olá!
 
-Meu nome é ${f.guide} e serei seu guia no tour para ${f.tour}.
+Meu nome é {{guide}} e serei seu guia no tour para {{tour}}.
 
 🏜 Serviço:
-Dia:         ${f.day}
-Hotel:     ${f.hotel}
-Porta:     ${f.door}
-Horário: ${f.hour}
+Dia:         {{day}}
+Hotel:     {{hotel}}
+Porta:     {{door}}
+Horário: {{hour}}
 
-Temperatura ${f.place}: ${f.tempDisplay}°${f.tempUnit}
+Temperatura {{place}}: {{tempDisplay}}°{{tempUnit}}
 
 **********************
 Por favor, confirme se este é o seu hotel
@@ -600,17 +459,17 @@ Se tiver alguma dúvida, não hesite em me contatar!
 
 Obrigado,  Luci🌹`;
 
-templates.default.en = f => `Hello!
+DEFAULT_TEMPLATES.default.en = `Hello!
 
-My name is ${f.guide} and I will be your guide on the ${f.tour} tour.
+My name is {{guide}} and I will be your guide on the {{tour}} tour.
 
 🏜 Service:
-Day:      ${f.day}
-Hotel:    ${f.hotel}
-Door:     ${f.door}
-Time:     ${f.hour}
+Day:      {{day}}
+Hotel:    {{hotel}}
+Door:     {{door}}
+Time:     {{hour}}
 
-${f.place} Temperature: ${f.tempDisplay}°${f.tempUnit}
+{{place}} Temperature: {{tempDisplay}}°{{tempUnit}}
 
 **********************
 Please confirm this is your hotel
@@ -655,17 +514,17 @@ If you have any questions, please don't hesitate to contact me!
 
 Thank you,  Luci🌹`;
 
-templates.default.it = f => `Ciao!
+DEFAULT_TEMPLATES.default.it = `Ciao!
 
-Mi chiamo ${f.guide} e sarò la tua guida nel tour ${f.tour}.
+Mi chiamo {{guide}} e sarò la tua guida nel tour {{tour}}.
 
 🏜 Servizio:
-Giorno: ${f.day}
-Hotel:    ${f.hotel}
-Porta:    ${f.door}
-Ora:       ${f.hour}
+Giorno: {{day}}
+Hotel:    {{hotel}}
+Porta:    {{door}}
+Ora:       {{hour}}
 
-Temperatura ${f.place}: ${f.tempDisplay}°${f.tempUnit}
+Temperatura {{place}}: {{tempDisplay}}°{{tempUnit}}
 
 **********************
 Per favore conferma che questo è il tuo hotel
@@ -710,17 +569,17 @@ Se avete domande, non esitate a contattarmi!
 
 Grazie,  Luci🌹`;
 
-templates.valle.es = f => `🏜️ Bienvenido a Las Vegas!!
+DEFAULT_TEMPLATES.valle.es = `🏜️ Bienvenido a Las Vegas!!
 
-Soy *${f.guide}*, tu guía para el tour a *${f.tour}*!
+Soy *{{guide}}*, tu guía para el tour a *{{tour}}*!
 📋 Por favor, lee toda la información y contesta *OK*. ¡Gracias!
 
 ➖➖➖➖➖➖➖➖➖➖
-📅 Día: *${f.day}*
-🏨 Hotel: *${f.hotel}*
-🚪 Puerta: *${f.door}*
-⏰ Hora: *${f.hour}*
-🌡️ Temperatura en el Valle: *${f.tempMinDisplay}° a ${f.tempMaxDisplay}°${f.tempUnit}*
+📅 Día: *{{day}}*
+🏨 Hotel: *{{hotel}}*
+🚪 Puerta: *{{door}}*
+⏰ Hora: *{{hour}}*
+🌡️ Temperatura en el Valle: *{{tempMinDisplay}}° a {{tempMaxDisplay}}°{{tempUnit}}*
 ➖➖➖➖➖➖➖➖➖➖
 
 💵 *INFORMATIVO PROPINAS EN USA*
@@ -742,17 +601,17 @@ Estimado cliente, le informamos que en su servicio no está incluida la propina.
 
 🙏 GRACIAS POR SU VISITA 😀👍`;
 
-templates.valle.pt = f => `🏜️ Bem-vindo a Las Vegas!!
+DEFAULT_TEMPLATES.valle.pt = `🏜️ Bem-vindo a Las Vegas!!
 
-Sou *${f.guide}*, seu guia para o tour ao *${f.tour}*!
+Sou *{{guide}}*, seu guia para o tour ao *{{tour}}*!
 📋 Por favor, leia todas as informações e responda *OK*. Obrigado!
 
 ➖➖➖➖➖➖➖➖➖➖
-📅 Dia: *${f.day}*
-🏨 Hotel: *${f.hotel}*
-🚪 Porta: *${f.door}*
-⏰ Horário: *${f.hour}*
-🌡️ Temperatura no Vale: *${f.tempMinDisplay}° a ${f.tempMaxDisplay}°${f.tempUnit}*
+📅 Dia: *{{day}}*
+🏨 Hotel: *{{hotel}}*
+🚪 Porta: *{{door}}*
+⏰ Horário: *{{hour}}*
+🌡️ Temperatura no Vale: *{{tempMinDisplay}}° a {{tempMaxDisplay}}°{{tempUnit}}*
 ➖➖➖➖➖➖➖➖➖➖
 
 💵 *INFORMATIVO SOBRE GORJETAS NOS EUA*
@@ -774,17 +633,17 @@ Prezado cliente, informamos que a gorjeta não está incluída no seu serviço. 
 
 🙏 OBRIGADO PELA SUA VISITA 😀👍`;
 
-templates.valle.en = f => `🏜️ Welcome to Las Vegas!!
+DEFAULT_TEMPLATES.valle.en = `🏜️ Welcome to Las Vegas!!
 
-I'm *${f.guide}*, your guide for the *${f.tour}* tour!
+I'm *{{guide}}*, your guide for the *{{tour}}* tour!
 📋 Please read all the information and reply *OK*. Thank you!
 
 ➖➖➖➖➖➖➖➖➖➖
-📅 Day: *${f.day}*
-🏨 Hotel: *${f.hotel}*
-🚪 Door: *${f.door}*
-⏰ Time: *${f.hour}*
-🌡️ Temperature in the Valley: *${f.tempMinDisplay}° to ${f.tempMaxDisplay}°${f.tempUnit}*
+📅 Day: *{{day}}*
+🏨 Hotel: *{{hotel}}*
+🚪 Door: *{{door}}*
+⏰ Time: *{{hour}}*
+🌡️ Temperature in the Valley: *{{tempMinDisplay}}° to {{tempMaxDisplay}}°{{tempUnit}}*
 ➖➖➖➖➖➖➖➖➖➖
 
 💵 *TIPS INFORMATION IN THE USA*
@@ -806,17 +665,17 @@ Dear guest, please note that gratuity is not included in your service. If you en
 
 🙏 THANK YOU FOR YOUR VISIT 😀👍`;
 
-templates.valle.it = f => `🏜️ Benvenuto a Las Vegas!!
+DEFAULT_TEMPLATES.valle.it = `🏜️ Benvenuto a Las Vegas!!
 
-Sono *${f.guide}*, la tua guida per il tour a *${f.tour}*!
+Sono *{{guide}}*, la tua guida per il tour a *{{tour}}*!
 📋 Ti preghiamo di leggere tutte le informazioni e rispondere *OK*. Grazie!
 
 ➖➖➖➖➖➖➖➖➖➖
-📅 Giorno: *${f.day}*
-🏨 Hotel: *${f.hotel}*
-🚪 Porta: *${f.door}*
-⏰ Ora: *${f.hour}*
-🌡️ Temperatura nella Valle: *${f.tempMinDisplay}° a ${f.tempMaxDisplay}°${f.tempUnit}*
+📅 Giorno: *{{day}}*
+🏨 Hotel: *{{hotel}}*
+🚪 Porta: *{{door}}*
+⏰ Ora: *{{hour}}*
+🌡️ Temperatura nella Valle: *{{tempMinDisplay}}° a {{tempMaxDisplay}}°{{tempUnit}}*
 ➖➖➖➖➖➖➖➖➖➖
 
 💵 *INFORMAZIONI SULLE MANCE NEGLI USA*
@@ -838,24 +697,24 @@ Gentile cliente, la informiamo che la mancia non è inclusa nel servizio. Se il 
 
 🙏 GRAZIE PER LA VISITA 😀👍`;
 
-templates.grandcanyon.es = f => `🏜️ Bienvenido a Las Vegas!!
+DEFAULT_TEMPLATES.grandcanyon.es = `🏜️ Bienvenido a Las Vegas!!
 
-Soy *${f.guide}*, tu guía para el tour a *${f.tour}*!
+Soy *{{guide}}*, tu guía para el tour a *{{tour}}*!
 📋 Por favor, lee toda la información y contesta *OK*. ¡Gracias!
 
 ⚠️ *IMPORTANTE*
 Favor de llegar 5 min antes en el lugar y hora indicados en este mensaje. Los retrasos pueden causar la pérdida del tour. ¡Gracias!
 
 ➖➖➖➖➖➖➖➖➖➖
-📅 Día: *${f.day}*
-🏨 Hotel: *${f.hotel}*
-🚪 Puerta: *${f.door}*
-⏰ Hora: *${f.hour}*
-🌡️ Temperatura en el Cañón: *${f.tempMinDisplay}° a ${f.tempMaxDisplay}°${f.tempUnit}*
+📅 Día: *{{day}}*
+🏨 Hotel: *{{hotel}}*
+🚪 Puerta: *{{door}}*
+⏰ Hora: *{{hour}}*
+🌡️ Temperatura en el Cañón: *{{tempMinDisplay}}° a {{tempMaxDisplay}}°{{tempUnit}}*
 ➖➖➖➖➖➖➖➖➖➖
 
 💵 *INFORMATIVO PROPINAS EN USA*
-Estimado cliente, le informamos que en su servicio no está incluida la propina. Si el servicio fue de su agrado, lo habitual es a partir de $${f.tip} dólares por persona. ¡Gracias!
+Estimado cliente, le informamos que en su servicio no está incluida la propina. Si el servicio fue de su agrado, lo habitual es a partir de \${{tip}} dólares por persona. ¡Gracias!
 
 📍 Es responsabilidad del cliente localizar el punto de encuentro. Aconsejamos hacerlo la noche previa al tour.
 
@@ -864,7 +723,7 @@ Estimado cliente, le informamos que en su servicio no está incluida la propina.
 🚫 No se permite comer, beber ni traer alcohol dentro de la furgoneta/coche.
 🎒 No se permite entrar al parque con comida ni mochilas grandes. Solo agua, bolsos pequeños o cangureras.
 
-🕓 Llegada a Las Vegas alrededor de las *${f.arrival}*.
+🕓 Llegada a Las Vegas alrededor de las *{{arrival}}*.
 
 📞 Teléfono de emergencia: *+1 (702) 359-7699*
 
@@ -872,24 +731,24 @@ Estimado cliente, le informamos que en su servicio no está incluida la propina.
 
 🙏 GRACIAS POR SU VISITA 😀👍`;
 
-templates.grandcanyon.pt = f => `🏜️ Bem-vindo a Las Vegas!!
+DEFAULT_TEMPLATES.grandcanyon.pt = `🏜️ Bem-vindo a Las Vegas!!
 
-Sou *${f.guide}*, seu guia para o tour ao *${f.tour}*!
+Sou *{{guide}}*, seu guia para o tour ao *{{tour}}*!
 📋 Por favor, leia todas as informações e responda *OK*. Obrigado!
 
 ⚠️ *IMPORTANTE*
 Por favor, chegue 5 min antes no local e horário indicados nesta mensagem. Atrasos podem causar a perda do tour. Obrigado!
 
 ➖➖➖➖➖➖➖➖➖➖
-📅 Dia: *${f.day}*
-🏨 Hotel: *${f.hotel}*
-🚪 Porta: *${f.door}*
-⏰ Horário: *${f.hour}*
-🌡️ Temperatura no Cânion: *${f.tempMinDisplay}° a ${f.tempMaxDisplay}°${f.tempUnit}*
+📅 Dia: *{{day}}*
+🏨 Hotel: *{{hotel}}*
+🚪 Porta: *{{door}}*
+⏰ Horário: *{{hour}}*
+🌡️ Temperatura no Cânion: *{{tempMinDisplay}}° a {{tempMaxDisplay}}°{{tempUnit}}*
 ➖➖➖➖➖➖➖➖➖➖
 
 💵 *INFORMATIVO SOBRE GORJETAS NOS EUA*
-Prezado cliente, informamos que a gorjeta não está incluída no seu serviço. Se o serviço foi do seu agrado, o habitual é a partir de $${f.tip} dólares por pessoa. Obrigado!
+Prezado cliente, informamos que a gorjeta não está incluída no seu serviço. Se o serviço foi do seu agrado, o habitual é a partir de \${{tip}} dólares por pessoa. Obrigado!
 
 📍 É responsabilidade do cliente localizar o ponto de encontro. Aconselhamos fazer isso na noite anterior ao tour.
 
@@ -898,7 +757,7 @@ Prezado cliente, informamos que a gorjeta não está incluída no seu serviço. 
 🚫 Não é permitido comer, beber ou levar álcool dentro da van/carro.
 🎒 Não é permitido entrar no parque com comida ou mochilas grandes. Somente água, bolsas pequenas ou pochetes.
 
-🕓 Chegada em Las Vegas por volta das *${f.arrival}*.
+🕓 Chegada em Las Vegas por volta das *{{arrival}}*.
 
 📞 Telefone de emergência: *+1 (702) 359-7699*
 
@@ -906,24 +765,24 @@ Prezado cliente, informamos que a gorjeta não está incluída no seu serviço. 
 
 🙏 OBRIGADO PELA SUA VISITA 😀👍`;
 
-templates.grandcanyon.en = f => `🏜️ Welcome to Las Vegas!!
+DEFAULT_TEMPLATES.grandcanyon.en = `🏜️ Welcome to Las Vegas!!
 
-I'm *${f.guide}*, your guide for the *${f.tour}* tour!
+I'm *{{guide}}*, your guide for the *{{tour}}* tour!
 📋 Please read all the information and reply *OK*. Thank you!
 
 ⚠️ *IMPORTANT*
 Please arrive 5 min before the location and time indicated in this message. Delays may cause you to lose your spot on the tour. Thank you!
 
 ➖➖➖➖➖➖➖➖➖➖
-📅 Day: *${f.day}*
-🏨 Hotel: *${f.hotel}*
-🚪 Door: *${f.door}*
-⏰ Time: *${f.hour}*
-🌡️ Temperature at the Canyon: *${f.tempMinDisplay}° to ${f.tempMaxDisplay}°${f.tempUnit}*
+📅 Day: *{{day}}*
+🏨 Hotel: *{{hotel}}*
+🚪 Door: *{{door}}*
+⏰ Time: *{{hour}}*
+🌡️ Temperature at the Canyon: *{{tempMinDisplay}}° to {{tempMaxDisplay}}°{{tempUnit}}*
 ➖➖➖➖➖➖➖➖➖➖
 
 💵 *TIPS INFORMATION IN THE USA*
-Dear guest, please note that gratuity is not included in your service. If you enjoyed the service, the standard is from $${f.tip} per person. Thank you!
+Dear guest, please note that gratuity is not included in your service. If you enjoyed the service, the standard is from \${{tip}} per person. Thank you!
 
 📍 It is the client's responsibility to locate the meeting point. We recommend doing so the night before the tour.
 
@@ -932,7 +791,7 @@ Dear guest, please note that gratuity is not included in your service. If you en
 🚫 Eating, drinking or bringing alcohol inside the van/car is not allowed.
 🎒 Entering the park with food or large backpacks is not allowed. Only water, small bags or fanny packs.
 
-🕓 Arrival in Las Vegas around *${f.arrival}*.
+🕓 Arrival in Las Vegas around *{{arrival}}*.
 
 📞 Emergency phone: *+1 (702) 359-7699*
 
@@ -940,24 +799,24 @@ Dear guest, please note that gratuity is not included in your service. If you en
 
 🙏 THANK YOU FOR YOUR VISIT 😀👍`;
 
-templates.grandcanyon.it = f => `🏜️ Benvenuto a Las Vegas!!
+DEFAULT_TEMPLATES.grandcanyon.it = `🏜️ Benvenuto a Las Vegas!!
 
-Sono *${f.guide}*, la tua guida per il tour a *${f.tour}*!
+Sono *{{guide}}*, la tua guida per il tour a *{{tour}}*!
 📋 Ti preghiamo di leggere tutte le informazioni e rispondere *OK*. Grazie!
 
 ⚠️ *IMPORTANTE*
 Ti preghiamo di arrivare 5 min prima nel luogo e orario indicati in questo messaggio. I ritardi possono causare la perdita del tour. Grazie!
 
 ➖➖➖➖➖➖➖➖➖➖
-📅 Giorno: *${f.day}*
-🏨 Hotel: *${f.hotel}*
-🚪 Porta: *${f.door}*
-⏰ Ora: *${f.hour}*
-🌡️ Temperatura al Canyon: *${f.tempMinDisplay}° a ${f.tempMaxDisplay}°${f.tempUnit}*
+📅 Giorno: *{{day}}*
+🏨 Hotel: *{{hotel}}*
+🚪 Porta: *{{door}}*
+⏰ Ora: *{{hour}}*
+🌡️ Temperatura al Canyon: *{{tempMinDisplay}}° a {{tempMaxDisplay}}°{{tempUnit}}*
 ➖➖➖➖➖➖➖➖➖➖
 
 💵 *INFORMAZIONI SULLE MANCE NEGLI USA*
-Gentile cliente, la informiamo che la mancia non è inclusa nel servizio. Se il servizio è stato di suo gradimento, l'importo abituale è a partire da $${f.tip} a persona. Grazie!
+Gentile cliente, la informiamo che la mancia non è inclusa nel servizio. Se il servizio è stato di suo gradimento, l'importo abituale è a partire da \${{tip}} a persona. Grazie!
 
 📍 È responsabilità del cliente individuare il punto d'incontro. Consigliamo di farlo la sera prima del tour.
 
@@ -966,13 +825,22 @@ Gentile cliente, la informiamo che la mancia non è inclusa nel servizio. Se il 
 🚫 Non è consentito mangiare, bere o portare alcolici all'interno del van/auto.
 🎒 Non è consentito entrare nel parco con cibo o zaini grandi. Solo acqua, borse piccole o marsupi.
 
-🕓 Arrivo a Las Vegas intorno alle *${f.arrival}*.
+🕓 Arrivo a Las Vegas intorno alle *{{arrival}}*.
 
 📞 Telefono di emergenza: *+1 (702) 359-7699*
 
 👥 Se sei in un gruppo, condividi questo messaggio con loro affinché tutti abbiano le informazioni.
 
 🙏 GRAZIE PER LA VISITA 😀👍`;
+
+const TPL_OVERRIDES_KEY = 'lucris_template_overrides_v1';
+function loadOverrides(){ try{ return JSON.parse(localStorage.getItem(TPL_OVERRIDES_KEY)) || {}; }catch(err){ return {}; } }
+function saveOverrides(ov){ try{ localStorage.setItem(TPL_OVERRIDES_KEY, JSON.stringify(ov)); }catch(err){ alert('Não foi possível salvar neste navegador.'); } }
+function getActiveTemplate(group, lang){
+  const ov = loadOverrides();
+  if(ov[group] && ov[group][lang]) return ov[group][lang];
+  return DEFAULT_TEMPLATES[group][lang];
+}
 
 function render(){
   const f = getFields();
@@ -984,28 +852,22 @@ function render(){
   f.tempMinDisplay = currentLang === 'en' ? cToF(f.tempmin) : f.tempmin;
   f.tempMaxDisplay = currentLang === 'en' ? cToF(f.tempmax) : f.tempmax;
 
-  const set = templates[group];
-  const text = set[currentLang](f);
-  document.getElementById('preview').textContent = text;
+  const tplStr = getActiveTemplate(group, currentLang);
+  document.getElementById('preview').textContent = fillTemplate(tplStr, f);
 }
 
 function applyHotelPhoto(){
   const hotel = document.getElementById('f_hotel').value;
   const custom = hotel === 'Outro (digitar)';
   document.getElementById('f_hotel_custom').style.display = custom ? 'block' : 'none';
-
   const lib = loadLibrary();
   const name = custom ? document.getElementById('f_hotel_custom').value.trim() : hotel;
-
   if(name && lib[name]){
-    photoDataUrl = lib[name];
-    photoIsAuto = true;
+    photoDataUrl = lib[name]; photoIsAuto = true;
     const img = document.getElementById('photo_preview');
-    img.src = photoDataUrl;
-    img.style.display = 'block';
+    img.src = photoDataUrl; img.style.display = 'block';
   }else if(photoIsAuto){
-    photoDataUrl = null;
-    photoIsAuto = false;
+    photoDataUrl = null; photoIsAuto = false;
     document.getElementById('photo_preview').style.display = 'none';
   }
 }
@@ -1036,11 +898,9 @@ document.getElementById('f_photo').addEventListener('change', (e) => {
   if(!file) return;
   const reader = new FileReader();
   reader.onload = (ev) => {
-    photoDataUrl = ev.target.result;
-    photoIsAuto = false;
+    photoDataUrl = ev.target.result; photoIsAuto = false;
     const img = document.getElementById('photo_preview');
-    img.src = photoDataUrl;
-    img.style.display = 'block';
+    img.src = photoDataUrl; img.style.display = 'block';
   };
   reader.readAsDataURL(file);
 });
@@ -1053,14 +913,8 @@ function getCurrentHotelName(){
 
 document.getElementById('save_pickup_btn').addEventListener('click', () => {
   const name = getCurrentHotelName();
-  if(!name){
-    alert('Selecione um hotel (ou digite o nome) no topo primeiro.');
-    return;
-  }
-  if(!photoDataUrl){
-    alert('Escolha uma foto primeiro.');
-    return;
-  }
+  if(!name){ alert('Selecione um hotel (ou digite o nome) no topo primeiro.'); return; }
+  if(!photoDataUrl){ alert('Escolha uma foto primeiro.'); return; }
   const lib = loadLibrary();
   lib[name] = photoDataUrl;
   saveLibrary(lib);
@@ -1070,36 +924,23 @@ document.getElementById('save_pickup_btn').addEventListener('click', () => {
 
 document.getElementById('delete_pickup_btn').addEventListener('click', () => {
   const name = getCurrentHotelName();
-  if(!name){
-    alert('Selecione um hotel no topo primeiro.');
-    return;
-  }
+  if(!name){ alert('Selecione um hotel no topo primeiro.'); return; }
   const lib = loadLibrary();
-  if(!lib[name]){
-    alert('Este hotel não tem foto salva.');
-    return;
-  }
+  if(!lib[name]){ alert('Este hotel não tem foto salva.'); return; }
   delete lib[name];
   saveLibrary(lib);
-  photoDataUrl = null;
-  photoIsAuto = false;
+  photoDataUrl = null; photoIsAuto = false;
   document.getElementById('photo_preview').style.display = 'none';
   refreshPickupUI();
 });
 
-refreshPickupUI();
-
 document.getElementById('copy_btn').addEventListener('click', async () => {
   const text = document.getElementById('preview').textContent;
-  try{
-    await navigator.clipboard.writeText(text);
-  }catch(err){
+  try{ await navigator.clipboard.writeText(text); }
+  catch(err){
     const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
   }
   const msg = document.getElementById('copied_msg');
   msg.style.display = 'block';
@@ -1107,19 +948,106 @@ document.getElementById('copy_btn').addEventListener('click', async () => {
 });
 
 document.getElementById('photo_dl_btn').addEventListener('click', () => {
-  if(!photoDataUrl){
-    alert('Carregue uma foto do ponto de encontro primeiro.');
-    return;
-  }
+  if(!photoDataUrl){ alert('Carregue uma foto do ponto de encontro primeiro.'); return; }
   const a = document.createElement('a');
-  a.href = photoDataUrl;
-  a.download = 'ponto-encontro.jpg';
-  a.click();
+  a.href = photoDataUrl; a.download = 'ponto-encontro.jpg'; a.click();
+});
+
+/* ===== NAVEGAÇÃO ENTRE TELAS ===== */
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + btn.dataset.screen).classList.add('active');
+    if(btn.dataset.screen === 'biblioteca') renderLibraryScreen();
+    if(btn.dataset.screen === 'mensagens') renderTplScreen();
+  });
+});
+
+/* ===== TELA MENSAGENS PADRÃO ===== */
+let tplGroup = 'default';
+let tplLang = 'es';
+let tplEditing = false;
+
+document.querySelectorAll('.group-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.group-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    tplGroup = btn.dataset.group;
+    tplEditing = false;
+    renderTplScreen();
+  });
+});
+document.querySelectorAll('.mlang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mlang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    tplLang = btn.dataset.lang;
+    tplEditing = false;
+    renderTplScreen();
+  });
+});
+
+function renderTplScreen(){
+  const text = getActiveTemplate(tplGroup, tplLang);
+  const ov = loadOverrides();
+  const hasOverride = !!(ov[tplGroup] && ov[tplGroup][tplLang]);
+  document.getElementById('override_badge').style.display = hasOverride ? 'inline-block' : 'none';
+
+  const view = document.getElementById('tpl_view');
+  const edit = document.getElementById('tpl_edit');
+  const editBtn = document.getElementById('tpl_edit_btn');
+  const saveBtn = document.getElementById('tpl_save_btn');
+
+  if(tplEditing){
+    view.style.display = 'none';
+    edit.style.display = 'block';
+    edit.value = text;
+    editBtn.style.display = 'none';
+    saveBtn.style.display = 'block';
+  }else{
+    view.style.display = 'block';
+    edit.style.display = 'none';
+    view.textContent = text;
+    editBtn.style.display = 'block';
+    saveBtn.style.display = 'none';
+  }
+}
+
+document.getElementById('tpl_edit_btn').addEventListener('click', () => {
+  tplEditing = true;
+  renderTplScreen();
+});
+
+document.getElementById('tpl_save_btn').addEventListener('click', () => {
+  const newText = document.getElementById('tpl_edit').value;
+  const ov = loadOverrides();
+  if(!ov[tplGroup]) ov[tplGroup] = {};
+  ov[tplGroup][tplLang] = newText;
+  saveOverrides(ov);
+  tplEditing = false;
+  renderTplScreen();
+  render();
+  const msg = document.getElementById('tpl_saved_msg');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 1800);
+});
+
+document.getElementById('tpl_restore_btn').addEventListener('click', () => {
+  if(!confirm('Restaurar o modelo padrão? Isso apaga o texto editado deste idioma/modelo.')) return;
+  const ov = loadOverrides();
+  if(ov[tplGroup]) delete ov[tplGroup][tplLang];
+  saveOverrides(ov);
+  tplEditing = false;
+  renderTplScreen();
+  render();
 });
 
 populateHotelSelect();
 toggleDoorCustom();
 toggleTempFields();
+refreshPickupUI();
 render();
 </script>
 
