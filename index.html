@@ -199,7 +199,10 @@
       </div>
       <div class="preview" id="preview"></div>
       <div class="actions">
-        <button class="btn btn-primary" id="copy_btn">Copiar texto</button>
+        <button class="btn btn-primary" id="share_btn" style="display:none;">📤 Compartilhar (texto + foto)</button>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" id="copy_btn">Copiar texto</button>
         <button class="btn btn-secondary" id="photo_dl_btn">Baixar foto</button>
       </div>
       <div class="copied-msg" id="copied_msg">Copiado ✓</div>
@@ -982,6 +985,7 @@ function render(){
 
   const tplStr = getActiveTemplate(group, currentLang);
   document.getElementById('preview').textContent = fillTemplate(tplStr, f);
+  updateShareButtonVisibility();
 }
 
 async function applyHotelPhoto(){
@@ -1110,6 +1114,35 @@ document.getElementById('photo_dl_btn').addEventListener('click', () => {
   if(!photoDataUrl){ alert('Carregue uma foto do ponto de encontro primeiro.'); return; }
   const a = document.createElement('a');
   a.href = photoDataUrl; a.download = 'ponto-encontro.jpg'; a.click();
+});
+
+async function dataUrlToFile(dataUrl, filename){
+  const res = await fetch(dataUrl);
+  const blob = await res.blob();
+  return new File([blob], filename, { type: blob.type || 'image/jpeg' });
+}
+
+function updateShareButtonVisibility(){
+  const btn = document.getElementById('share_btn');
+  const supported = !!(navigator.share && navigator.canShare);
+  btn.style.display = (supported && photoDataUrl) ? 'block' : 'none';
+}
+
+document.getElementById('share_btn').addEventListener('click', async () => {
+  if(!photoDataUrl){ alert('Carregue uma foto do ponto de encontro primeiro.'); return; }
+  const text = document.getElementById('preview').textContent;
+  try{
+    const file = await dataUrlToFile(photoDataUrl, 'ponto-encontro.jpg');
+    if(navigator.canShare && navigator.canShare({ files: [file] })){
+      await navigator.share({ text, files: [file] });
+    }else{
+      await navigator.share({ text });
+    }
+  }catch(err){
+    if(err && err.name !== 'AbortError'){
+      alert('Não foi possível compartilhar. Use os botões de Copiar texto e Baixar foto.');
+    }
+  }
 });
 
 /* ===== NAVEGAÇÃO ENTRE TELAS ===== */
