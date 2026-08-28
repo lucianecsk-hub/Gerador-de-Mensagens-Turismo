@@ -394,6 +394,8 @@ async function migrateOldLibraryIfNeeded(){
         await saveLibrary(normalizeLib(parsed));
       }
     }
+    // libera o espaço do localStorage que as fotos antigas ocupavam
+    try{ localStorage.removeItem(LIB_KEY); }catch(e){}
   }catch(err){ /* segue sem migrar */ }
 }
 
