@@ -320,24 +320,90 @@ function toggleTempFields(){
 }
 
 const LIB_KEY = 'lucris_pickup_library_v1';
-function loadLibrary(){
-  try{
-    const raw = JSON.parse(localStorage.getItem(LIB_KEY)) || {};
-    const norm = {};
-    Object.keys(raw).forEach(name => {
-      norm[name] = Array.isArray(raw[name]) ? raw[name] : [raw[name]];
-    });
-    return norm;
-  }catch(err){ return {}; }
+const IDB_NAME = 'lucris_photos_db';
+const IDB_STORE = 'library';
+let idbPromise = null;
+
+function openPhotoDB(){
+  if(idbPromise) return idbPromise;
+  idbPromise = new Promise((resolve, reject) => {
+    if(!window.indexedDB){ reject(new Error('IndexedDB indisponível')); return; }
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  return idbPromise;
 }
-function saveLibrary(lib){ try{ localStorage.setItem(LIB_KEY, JSON.stringify(lib)); return true; }catch(err){ alert('Espaço cheio! O navegador tem um limite de espaço pra guardar fotos. Exclua algumas fotos antigas na Biblioteca e tente salvar de novo.'); return false; } }
+
+function normalizeLib(raw){
+  const norm = {};
+  Object.keys(raw || {}).forEach(name => {
+    norm[name] = Array.isArray(raw[name]) ? raw[name] : [raw[name]];
+  });
+  return norm;
+}
+
+async function loadLibrary(){
+  try{
+    const db = await openPhotoDB();
+    const raw = await new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get('data');
+      req.onsuccess = () => resolve(req.result || {});
+      req.onerror = () => reject(req.error);
+    });
+    return normalizeLib(raw);
+  }catch(err){
+    return {};
+  }
+}
+
+async function saveLibrary(lib){
+  try{
+    const db = await openPhotoDB();
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put(lib, 'data');
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+    return true;
+  }catch(err){
+    alert('Não foi possível salvar a foto. Tente novamente, ou exclua fotos antigas que não usa mais.');
+    return false;
+  }
+}
+
+async function migrateOldLibraryIfNeeded(){
+  try{
+    const db = await openPhotoDB();
+    const existing = await new Promise((resolve) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get('data');
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => resolve(null);
+    });
+    if(!existing){
+      const raw = localStorage.getItem(LIB_KEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        await saveLibrary(normalizeLib(parsed));
+      }
+    }
+  }catch(err){ /* segue sem migrar */ }
+}
+
 function latestPhoto(lib, name){
   const arr = lib[name];
   return (arr && arr.length) ? arr[arr.length - 1] : null;
 }
 
-function refreshPickupUI(){
-  const lib = loadLibrary();
+async function refreshPickupUI(){
+  const lib = await loadLibrary();
   const list = document.getElementById('pickup_list');
   if(list){
     list.innerHTML = '';
@@ -353,8 +419,8 @@ function refreshPickupUI(){
   renderLibraryScreen();
 }
 
-function renderLibraryScreen(){
-  const lib = loadLibrary();
+async function renderLibraryScreen(){
+  const lib = await loadLibrary();
   const names = Object.keys(lib).filter(n => lib[n] && lib[n].length).sort();
   const container = document.getElementById('lib_full_list');
   const emptyMsg = document.getElementById('lib_empty_msg');
@@ -373,15 +439,15 @@ function renderLibraryScreen(){
     container.appendChild(row);
   });
   container.querySelectorAll('.lib-photo-del').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const name = btn.dataset.name;
       const idx = parseInt(btn.dataset.idx, 10);
-      const lib2 = loadLibrary();
+      const lib2 = await loadLibrary();
       if(lib2[name]){
         lib2[name].splice(idx, 1);
         if(lib2[name].length === 0) delete lib2[name];
       }
-      saveLibrary(lib2);
+      await saveLibrary(lib2);
       refreshPickupUI();
     });
   });
@@ -908,11 +974,11 @@ function render(){
   document.getElementById('preview').textContent = fillTemplate(tplStr, f);
 }
 
-function applyHotelPhoto(){
+async function applyHotelPhoto(){
   const hotel = document.getElementById('f_hotel').value;
   const custom = hotel === 'Outro (digitar)';
   document.getElementById('f_hotel_custom').style.display = custom ? 'block' : 'none';
-  const lib = loadLibrary();
+  const lib = await loadLibrary();
   const name = custom ? document.getElementById('f_hotel_custom').value.trim() : hotel;
   const photo = name ? latestPhoto(lib, name) : null;
   if(photo){
@@ -991,26 +1057,26 @@ function getCurrentHotelName(){
   return hotel;
 }
 
-document.getElementById('save_pickup_btn').addEventListener('click', () => {
+document.getElementById('save_pickup_btn').addEventListener('click', async () => {
   const name = getCurrentHotelName();
   if(!name){ alert('Selecione um hotel (ou digite o nome) no topo primeiro.'); return; }
   if(!photoDataUrl){ alert('Escolha uma foto primeiro.'); return; }
-  const lib = loadLibrary();
+  const lib = await loadLibrary();
   if(!lib[name]) lib[name] = [];
   if(lib[name][lib[name].length - 1] !== photoDataUrl) lib[name].push(photoDataUrl);
-  saveLibrary(lib);
+  await saveLibrary(lib);
   photoIsAuto = true;
   refreshPickupUI();
 });
 
-document.getElementById('delete_pickup_btn').addEventListener('click', () => {
+document.getElementById('delete_pickup_btn').addEventListener('click', async () => {
   const name = getCurrentHotelName();
   if(!name){ alert('Selecione um hotel no topo primeiro.'); return; }
-  const lib = loadLibrary();
+  const lib = await loadLibrary();
   if(!lib[name] || !lib[name].length){ alert('Este hotel não tem foto salva.'); return; }
   lib[name].pop();
   if(lib[name].length === 0) delete lib[name];
-  saveLibrary(lib);
+  await saveLibrary(lib);
   photoDataUrl = null; photoIsAuto = false;
   document.getElementById('photo_preview').style.display = 'none';
   refreshPickupUI();
@@ -1157,15 +1223,16 @@ document.getElementById('lib_photo_input').addEventListener('change', async (e) 
   }
 });
 
-document.getElementById('lib_save_btn').addEventListener('click', () => {
+document.getElementById('lib_save_btn').addEventListener('click', async () => {
   const sel = document.getElementById('lib_hotel_select').value;
   const name = sel === 'Outro (digitar)' ? document.getElementById('lib_hotel_custom').value.trim() : sel;
   if(!name){ alert('Selecione um hotel (ou digite o nome) primeiro.'); return; }
   if(!libPhotoDataUrl){ alert('Escolha uma foto primeiro.'); return; }
-  const lib = loadLibrary();
+  const lib = await loadLibrary();
   if(!lib[name]) lib[name] = [];
   lib[name].push(libPhotoDataUrl);
-  saveLibrary(lib);
+  const ok = await saveLibrary(lib);
+  if(!ok) return;
 
   // limpa o formulário
   libPhotoDataUrl = null;
@@ -1185,7 +1252,7 @@ populateHotelSelect();
 populateLibHotelSelect();
 toggleDoorCustom();
 toggleTempFields();
-refreshPickupUI();
+migrateOldLibraryIfNeeded().then(() => refreshPickupUI());
 render();
 </script>
 
