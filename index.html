@@ -146,7 +146,7 @@
       <div class="row" id="temp_default_row">
         <div class="field">
           <label>Temperatura (°C — converte pra °F em inglês)</label>
-          <input type="text" id="f_tempc" value="17">
+          <input type="number" id="f_tempc" value="17" inputmode="numeric">
         </div>
       </div>
       <div class="field full" id="temp_default_place">
@@ -156,11 +156,11 @@
       <div class="row" id="temp_valle_row" style="display:none;">
         <div class="field">
           <label>Temperatura mínima °C</label>
-          <input type="text" id="f_tempmin" value="34">
+          <input type="number" id="f_tempmin" value="34" inputmode="numeric">
         </div>
         <div class="field">
           <label>Temperatura máxima °C</label>
-          <input type="text" id="f_tempmax" value="50">
+          <input type="number" id="f_tempmax" value="50" inputmode="numeric">
         </div>
       </div>
       <div class="row" id="tip_arrival_row" style="display:none;">
@@ -170,7 +170,7 @@
         </div>
         <div class="field" id="arrival_field">
           <label>Chegada em Vegas (aprox.)</label>
-          <input type="text" id="f_arrival" value="4:00 PM">
+          <input type="time" id="f_arrival" value="16:00">
         </div>
       </div>
     </div>
@@ -486,6 +486,7 @@ function getFields(){
   ids.forEach(id => o[id.replace('f_','')] = document.getElementById(id).value.trim());
   o.day = formatDayDisplay(document.getElementById('f_day').value);
   o.hour = formatHourDisplay(document.getElementById('f_hour').value);
+  o.arrival = formatHourDisplay(document.getElementById('f_arrival').value);
   if(o.hotel === 'Outro (digitar)') o.hotel = document.getElementById('f_hotel_custom').value.trim();
   if(o.door === 'Outro (digitar)') o.door = document.getElementById('f_door_custom').value.trim();
   return o;
