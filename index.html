@@ -102,6 +102,7 @@
           <label>Tour</label>
           <select id="f_tour">
             <option value="Grand Canyon West">Grand Canyon West</option>
+            <option value="Mt. Charleston">Mt. Charleston</option>
             <option value="Valle da Morte">Valle da Morte</option>
             <option value="Valle da morte com Area 51">Valle da morte com Area 51</option>
             <option value="Red Rock Canyon">Red Rock Canyon</option>
@@ -243,10 +244,11 @@
   <div class="screen" id="screen-mensagens">
     <div class="card">
       <h2>Modelos de mensagem</h2>
-      <div class="group-tabs">
+      <div class="group-tabs" style="grid-template-columns:repeat(2,1fr);">
         <button class="group-btn active" data-group="default">Genérico</button>
         <button class="group-btn" data-group="valle">Valle da Morte</button>
         <button class="group-btn" data-group="grandcanyon">Grand Canyon West</button>
+        <button class="group-btn" data-group="mtcharleston">Mt. Charleston</button>
       </div>
       <div class="lang-tabs">
         <button class="mlang-btn active" data-lang="es">Español</button>
@@ -299,23 +301,25 @@ function cToF(c){
 
 const VALLE_TOURS = ['Valle da Morte', 'Valle da morte com Area 51'];
 const GRANDCANYON_TOURS = ['Grand Canyon West'];
+const MTCHARLESTON_TOURS = ['Mt. Charleston'];
 function getTourGroup(tour){
   if(VALLE_TOURS.includes(tour)) return 'valle';
   if(GRANDCANYON_TOURS.includes(tour)) return 'grandcanyon';
+  if(MTCHARLESTON_TOURS.includes(tour)) return 'mtcharleston';
   return 'default';
 }
 
-const GROUP_DEFAULT_TIP = { valle: '15', grandcanyon: '10' };
+const GROUP_DEFAULT_TIP = { valle: '15', grandcanyon: '10', mtcharleston: '10' };
 let lastGroup = null;
 function toggleTempFields(){
   const tour = document.getElementById('f_tour').value;
   const group = getTourGroup(tour);
-  const isRange = (group === 'valle' || group === 'grandcanyon');
+  const isRange = (group === 'valle' || group === 'grandcanyon' || group === 'mtcharleston');
   document.getElementById('temp_default_row').style.display = isRange ? 'none' : 'grid';
   document.getElementById('temp_default_place').style.display = isRange ? 'none' : 'block';
   document.getElementById('temp_valle_row').style.display = isRange ? 'grid' : 'none';
   document.getElementById('tip_arrival_row').style.display = isRange ? 'grid' : 'none';
-  document.getElementById('arrival_field').style.display = (group === 'grandcanyon') ? 'block' : 'none';
+  document.getElementById('arrival_field').style.display = (group === 'grandcanyon' || group === 'mtcharleston') ? 'block' : 'none';
   if(group !== lastGroup && GROUP_DEFAULT_TIP[group]){
     document.getElementById('f_tip').value = GROUP_DEFAULT_TIP[group];
   }
@@ -478,7 +482,7 @@ function fillTemplate(str, f){
   return str.replace(/\{\{(\w+)\}\}/g, (m, key) => (f[key] !== undefined ? f[key] : ''));
 }
 
-const DEFAULT_TEMPLATES = { default:{}, valle:{}, grandcanyon:{} };
+const DEFAULT_TEMPLATES = { default:{}, valle:{}, grandcanyon:{}, mtcharleston:{} };
 
 DEFAULT_TEMPLATES.default.es = `Hola.
 
@@ -962,6 +966,118 @@ Gentile cliente, la informiamo che la mancia non è inclusa nel servizio. Se il 
 📞 Telefono di emergenza: *+1 (702) 359-7699*
 
 👥 Se sei in un gruppo, condividi questo messaggio con loro affinché tutti abbiano le informazioni.
+
+🙏 GRAZIE PER LA VISITA 😀👍`;
+
+DEFAULT_TEMPLATES.mtcharleston.es = `Bienvenido a Las Vegas!!
+
+Mi nombre es *{{guide}}*. Soy vuestro guía para el tour a *{{tour}}*!
+
+*Después de leer toda la información en el mensaje, conteste OK. ¡Gracias!!*
+──────────
+📅 Día: *{{day}}*
+🏨 Hotel: *{{hotel}}*
+🚪 Puerta: *{{door}}*
+⏰ Hora: 🟡*{{hour}}*🟡
+🌡️ Temperatura en el Cañón: *{{tempMinDisplay}}° a {{tempMaxDisplay}}°{{tempUnit}}*
+──────────
+
+💵 *MENSAJE INFORMATIVO*
+*PROPINAS EN USA*
+Estimado cliente, le informamos que en su servicio no está incluida la propina. Sugerimos que si el servicio ha sido de su agrado, lo habitual es entre 10 y 15 dólares por persona. La propina no es obligatoria. ¡Gracias!!
+
+⚠️ *IMPORTANTE*
+Tiene que estar listo en el lugar y hora indicados, para no causar la pérdida del tour. ¡GRACIAS!
+
+📍 Es responsabilidad del cliente localizar el punto de encuentro. Aconsejamos hacerlo la noche previa al tour.
+
+🕓 Llegada a Las Vegas alrededor de las *{{arrival}}*.
+
+📞 Teléfono de emergencia: *+1 (702) 359-7699*
+
+🙏 GRACIAS POR SU VISITA 😀👍`;
+
+DEFAULT_TEMPLATES.mtcharleston.pt = `Bem-vindo a Las Vegas!!
+
+Meu nome é *{{guide}}*. Serei seu guia para o tour ao *{{tour}}*!
+
+*Depois de ler todas as informações desta mensagem, responda OK. Obrigado!!*
+──────────
+📅 Dia: *{{day}}*
+🏨 Hotel: *{{hotel}}*
+🚪 Porta: *{{door}}*
+⏰ Horário: 🟡*{{hour}}*🟡
+🌡️ Temperatura no Cânion: *{{tempMinDisplay}}° a {{tempMaxDisplay}}°{{tempUnit}}*
+──────────
+
+💵 *MENSAGEM INFORMATIVA*
+*GORJETAS NOS EUA*
+Prezado cliente, informamos que a gorjeta não está incluída no seu serviço. Sugerimos que, se o serviço foi do seu agrado, o habitual é entre 10 e 15 dólares por pessoa. A gorjeta não é obrigatória. Obrigado!!
+
+⚠️ *IMPORTANTE*
+Você deve estar pronto no local e horário indicados, para não causar a perda do tour. OBRIGADO!
+
+📍 É responsabilidade do cliente localizar o ponto de encontro. Aconselhamos fazer isso na noite anterior ao tour.
+
+🕓 Chegada em Las Vegas por volta das *{{arrival}}*.
+
+📞 Telefone de emergência: *+1 (702) 359-7699*
+
+🙏 OBRIGADO PELA SUA VISITA 😀👍`;
+
+DEFAULT_TEMPLATES.mtcharleston.en = `Welcome to Las Vegas!!
+
+My name is *{{guide}}*. I'll be your guide for the *{{tour}}* tour!
+
+*After reading all the information in this message, reply OK. Thank you!!*
+──────────
+📅 Day: *{{day}}*
+🏨 Hotel: *{{hotel}}*
+🚪 Door: *{{door}}*
+⏰ Time: 🟡*{{hour}}*🟡
+🌡️ Temperature at the Canyon: *{{tempMinDisplay}}° to {{tempMaxDisplay}}°{{tempUnit}}*
+──────────
+
+💵 *INFORMATIVE MESSAGE*
+*TIP NOT INCLUDED*
+Dear guest, please note that gratuity is not included in your service. If you enjoyed the service, the standard is between $10 and $15 per person. The tip is not mandatory. Thank you!!
+
+⚠️ *IMPORTANT*
+You must be ready at the location and time indicated, to avoid losing your spot on the tour. THANK YOU!
+
+📍 It is the client's responsibility to locate the meeting point. We recommend doing so the night before the tour.
+
+🕓 Arrival in Las Vegas around *{{arrival}}*.
+
+📞 Emergency phone: *+1 (702) 359-7699*
+
+🙏 THANK YOU FOR YOUR VISIT 😀👍`;
+
+DEFAULT_TEMPLATES.mtcharleston.it = `Benvenuto a Las Vegas!!
+
+Mi chiamo *{{guide}}*. Sarò la tua guida per il tour a *{{tour}}*!
+
+*Dopo aver letto tutte le informazioni in questo messaggio, rispondi OK. Grazie!!*
+──────────
+📅 Giorno: *{{day}}*
+🏨 Hotel: *{{hotel}}*
+🚪 Porta: *{{door}}*
+⏰ Ora: 🟡*{{hour}}*🟡
+🌡️ Temperatura al Canyon: *{{tempMinDisplay}}° a {{tempMaxDisplay}}°{{tempUnit}}*
+──────────
+
+💵 *MESSAGGIO INFORMATIVO*
+*MANCE NEGLI USA*
+Gentile cliente, la informiamo che la mancia non è inclusa nel servizio. Se il servizio è stato di suo gradimento, l'importo abituale è tra 10 e 15 dollari a persona. La mancia non è obbligatoria. Grazie!!
+
+⚠️ *IMPORTANTE*
+Deve essere pronto nel luogo e orario indicati, per non causare la perdita del tour. GRAZIE!
+
+📍 È responsabilità del cliente individuare il punto d'incontro. Consigliamo di farlo la sera prima del tour.
+
+🕓 Arrivo a Las Vegas intorno alle *{{arrival}}*.
+
+📞 Telefono di emergenza: *+1 (702) 359-7699*
 
 🙏 GRAZIE PER LA VISITA 😀👍`;
 
