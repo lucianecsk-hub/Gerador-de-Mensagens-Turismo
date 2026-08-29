@@ -120,7 +120,7 @@
         </div>
         <div class="field">
           <label>Horário</label>
-          <input type="text" id="f_hour" placeholder="5:40am" value="5:40am">
+          <input type="time" id="f_hour" value="05:40">
         </div>
       </div>
       <div class="row">
@@ -469,10 +469,23 @@ function formatDayDisplay(isoDate){
   return `${parts[1]}/${parts[2]}`;
 }
 
+function formatHourDisplay(time24){
+  if(!time24) return '';
+  const parts = time24.split(':');
+  if(parts.length !== 2) return time24;
+  let h = parseInt(parts[0], 10);
+  const m = parts[1];
+  const suffix = h >= 12 ? 'pm' : 'am';
+  h = h % 12;
+  if(h === 0) h = 12;
+  return `${h}:${m}${suffix}`;
+}
+
 function getFields(){
   const o = {};
   ids.forEach(id => o[id.replace('f_','')] = document.getElementById(id).value.trim());
   o.day = formatDayDisplay(document.getElementById('f_day').value);
+  o.hour = formatHourDisplay(document.getElementById('f_hour').value);
   if(o.hotel === 'Outro (digitar)') o.hotel = document.getElementById('f_hotel_custom').value.trim();
   if(o.door === 'Outro (digitar)') o.door = document.getElementById('f_door_custom').value.trim();
   return o;
