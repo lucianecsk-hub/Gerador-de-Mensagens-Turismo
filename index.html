@@ -249,6 +249,7 @@
         <button class="group-btn" data-group="valle">Valle da Morte</button>
         <button class="group-btn" data-group="grandcanyon">Grand Canyon West</button>
         <button class="group-btn" data-group="mtcharleston">Mt. Charleston</button>
+        <button class="group-btn" data-group="valledofogo">Valle do Fogo</button>
       </div>
       <div class="lang-tabs">
         <button class="mlang-btn active" data-lang="es">Español</button>
@@ -302,10 +303,12 @@ function cToF(c){
 const VALLE_TOURS = ['Valle da Morte', 'Valle da morte com Area 51'];
 const GRANDCANYON_TOURS = ['Grand Canyon West'];
 const MTCHARLESTON_TOURS = ['Mt. Charleston'];
+const VALLEDOFOGO_TOURS = ['Valle do Fogo'];
 function getTourGroup(tour){
   if(VALLE_TOURS.includes(tour)) return 'valle';
   if(GRANDCANYON_TOURS.includes(tour)) return 'grandcanyon';
   if(MTCHARLESTON_TOURS.includes(tour)) return 'mtcharleston';
+  if(VALLEDOFOGO_TOURS.includes(tour)) return 'valledofogo';
   return 'default';
 }
 
@@ -496,7 +499,7 @@ function fillTemplate(str, f){
   return str.replace(/\{\{(\w+)\}\}/g, (m, key) => (f[key] !== undefined ? f[key] : ''));
 }
 
-const DEFAULT_TEMPLATES = { default:{}, valle:{}, grandcanyon:{}, mtcharleston:{} };
+const DEFAULT_TEMPLATES = { default:{}, valle:{}, grandcanyon:{}, mtcharleston:{}, valledofogo:{} };
 
 DEFAULT_TEMPLATES.default.es = `Hola.
 
@@ -1106,6 +1109,227 @@ Gentile cliente, la informiamo che la mancia non è inclusa nel servizio. Se il 
 📞 Telefono di emergenza: *+1 (702) 359-7699*
 
 🙏 GRAZIE PER LA VISITA 😀👍`;
+
+
+DEFAULT_TEMPLATES.valledofogo.es = `Hola.
+
+Mi nombre es {{guide}} y seré tu guía en el tour para el {{tour}}.
+
+🏜 Servicio:
+Dia.        {{day}}
+Hotel:    {{hotel}}
+Puerta:  {{door}}
+Hora:      {{hour}}
+
+Temperatura {{place}}: {{tempDisplay}}°{{tempUnit}}
+
+**********************
+Por favor confirme que este es su hotel
+**********************
+
+🎲 Apreciado cliente, bienvenido a Las Vegas!
+
+Telefono de emergencia
++1 (702) 359-7699
+
+LAS  VEGAS  VIP  SERVICES 
+Siempre a su servicio 😊
+
+♠️ ♥️ ♣️ ♦️ ♠️ ♥️ ♣️ ♦️
+
+PROPINAS EN USA
+
+MENSAJE INFORMATIVO
+Estimado cliente, le informamos que en su servicio no esta incluida la propina, la cual es cultural en USA.
+
+Sugerimos que si el servicio ha sido de su satisfacción y tuviste UN LINDO DÍA la propina normal es $15.00 por persona.
+
+GRACIAS  POR  SU VISITA 😀!
+
+⚠️MUY IMPORTANTE⚠️
+Rogamos puntualidad
+
+*Llegar tarde puede ocasionar la pérdida del tour. Le recomendamos asegurarse bien del punto de encuentro y de estar 4̲ ̲m̲i̲n̲u̲t̲o̲s̲ antes d̲e̲l̲ ̲h̲o̲r̲a̲r̲i̲o̲ ̲d̲e̲s̲i̲g̲n̲a̲d̲o̲.*
+
+Es responsabilidad del cliente localizar el punto de encuentro, aconsejamos hacerlo un día antes.
+
+🤳Deberán de tener sus celulares operativos.
+
+🚧En ocasiones y por circunstancias de tráfico, obras pueden existir demoras en la recogida, no se preocupen siempre llegamos.
+
+❌ SI NO CONFIRMAN Y NO ESTÁN EN EL LUGAR DE RECOGIDA A LA HORA INDICADA, PUEDE OCASIONAR LA PÉRDIDA DEL TOUR!
+
+☕ Haremos una parada para el café.
+🍽️ Almuerzo incluido en el tour.
+
+Si tienes alguna pregunta por favor no dudes en contactarme!
+
+Gracias,  Luci🌹`;
+
+DEFAULT_TEMPLATES.valledofogo.pt = `Olá!
+
+Meu nome é {{guide}} e serei seu guia no tour para {{tour}}.
+
+🏜 Serviço:
+Dia:         {{day}}
+Hotel:     {{hotel}}
+Porta:     {{door}}
+Horário: {{hour}}
+
+Temperatura {{place}}: {{tempDisplay}}°{{tempUnit}}
+
+**********************
+Por favor, confirme se este é o seu hotel
+**********************
+
+🎲 Prezado cliente, bem-vindo a Las Vegas!
+
+Telefone de emergência
++1 (702) 359-7699
+
+LAS  VEGAS  VIP  SERVICES
+Sempre à sua disposição 😊
+
+♠️ ♥️ ♣️ ♦️ ♠️ ♥️ ♣️ ♦️
+
+GORJETAS NOS EUA
+
+MENSAGEM INFORMATIVA
+Prezado cliente, informamos que a gorjeta não está incluída no seu serviço, sendo esta uma prática cultural nos EUA.
+
+Sugerimos que, se o serviço foi de sua satisfação e você teve um ótimo dia, a gorjeta normal é de $15,00 por pessoa.
+
+OBRIGADO  PELA  SUA  VISITA 😀!
+
+⚠️MUITO IMPORTANTE⚠️
+Pedimos pontualidade
+
+*Chegar atrasado pode ocasionar a perda do tour. Recomendamos que se certifique bem do ponto de encontro e que esteja 4̲ ̲m̲i̲n̲u̲t̲o̲s̲ antes d̲o̲ ̲h̲o̲r̲á̲r̲i̲o̲ ̲m̲a̲r̲c̲a̲d̲o̲.*
+
+É responsabilidade do cliente localizar o ponto de encontro; aconselhamos fazer isso um dia antes.
+
+🤳Vocês deverão estar com os celulares operando normalmente.
+
+🚧Em algumas ocasiões, por causa do trânsito ou obras, podem ocorrer atrasos na recolha; não se preocupem, sempre chegamos.
+
+❌ SE NÃO CONFIRMAREM E NÃO ESTIVEREM NO LOCAL DE RECOLHA NO HORÁRIO INDICADO, ISSO PODE OCASIONAR A PERDA DO TOUR!
+
+☕ Faremos uma parada para o café.
+🍽️ Almoço incluído no tour.
+
+Se tiver alguma dúvida, não hesite em me contatar!
+
+Obrigado,  Luci🌹`;
+
+DEFAULT_TEMPLATES.valledofogo.en = `Hello!
+
+My name is {{guide}} and I will be your guide on the {{tour}} tour.
+
+🏜 Service:
+Day:      {{day}}
+Hotel:    {{hotel}}
+Door:     {{door}}
+Time:     {{hour}}
+
+{{place}} Temperature: {{tempDisplay}}°{{tempUnit}}
+
+**********************
+Please confirm this is your hotel
+**********************
+
+🎲 Dear guest, welcome to Las Vegas!
+
+Emergency phone
++1 (702) 359-7699
+
+LAS  VEGAS  VIP  SERVICES
+Always at your service 😊
+
+♠️ ♥️ ♣️ ♦️ ♠️ ♥️ ♣️ ♦️
+
+TIPS IN THE USA
+
+INFORMATIVE MESSAGE
+Dear guest, please note that gratuity is not included in your service, as tipping is customary in the USA.
+
+If you enjoyed the service and had a great day, we suggest a standard tip of $15.00 per person.
+
+THANK  YOU  FOR  YOUR  VISIT 😀!
+
+⚠️VERY IMPORTANT⚠️
+Please be punctual
+
+*Arriving late may result in losing your spot on the tour. We recommend making sure you know the meeting point and being there 4̲ ̲m̲i̲n̲u̲t̲e̲s̲ before t̲h̲e̲ ̲s̲c̲h̲e̲d̲u̲l̲e̲d̲ ̲t̲i̲m̲e̲.*
+
+It is the client's responsibility to locate the meeting point; we recommend doing so a day in advance.
+
+🤳Please make sure your cell phones are working.
+
+🚧Occasionally, due to traffic or roadwork, pickup delays may occur; don't worry, we always arrive.
+
+❌ IF YOU DO NOT CONFIRM AND ARE NOT AT THE PICKUP LOCATION AT THE INDICATED TIME, YOU MAY LOSE YOUR TOUR!
+
+☕ We will make a coffee stop.
+🍽️ Lunch included in the tour.
+
+If you have any questions, please don't hesitate to contact me!
+
+Thank you,  Luci🌹`;
+
+DEFAULT_TEMPLATES.valledofogo.it = `Ciao!
+
+Mi chiamo {{guide}} e sarò la tua guida nel tour {{tour}}.
+
+🏜 Servizio:
+Giorno: {{day}}
+Hotel:    {{hotel}}
+Porta:    {{door}}
+Ora:       {{hour}}
+
+Temperatura {{place}}: {{tempDisplay}}°{{tempUnit}}
+
+**********************
+Per favore conferma che questo è il tuo hotel
+**********************
+
+🎲 Gentile cliente, benvenuto a Las Vegas!
+
+Telefono di emergenza
++1 (702) 359-7699
+
+LAS  VEGAS  VIP  SERVICES
+Sempre al tuo servizio 😊
+
+♠️ ♥️ ♣️ ♦️ ♠️ ♥️ ♣️ ♦️
+
+MANCE NEGLI USA
+
+MESSAGGIO INFORMATIVO
+Gentile cliente, la informiamo che la mancia non è inclusa nel servizio, essendo una pratica culturale negli USA.
+
+Se il servizio è stato di suo gradimento e ha trascorso una bella giornata, suggeriamo una mancia standard di $15,00 a persona.
+
+GRAZIE  PER  LA  VISITA 😀!
+
+⚠️MOLTO IMPORTANTE⚠️
+Vi preghiamo di essere puntuali
+
+*Arrivare in ritardo può comportare la perdita del tour. Vi consigliamo di verificare bene il punto d'incontro e di essere presenti 4̲ ̲m̲i̲n̲u̲t̲i̲ prima d̲e̲l̲l̲'̲o̲r̲a̲r̲i̲o̲ ̲s̲t̲a̲b̲i̲l̲i̲t̲o̲.*
+
+È responsabilità del cliente individuare il punto d'incontro; consigliamo di farlo un giorno prima.
+
+🤳Assicuratevi che i vostri cellulari siano funzionanti.
+
+🚧In alcune occasioni, a causa del traffico o di lavori stradali, potrebbero verificarsi ritardi nel ritiro; non preoccupatevi, arriviamo sempre.
+
+❌ SE NON CONFERMATE E NON SIETE NEL PUNTO DI RITIRO ALL'ORARIO INDICATO, POTRESTE PERDERE IL TOUR!
+
+☕ Faremo una sosta per il caffè.
+🍽️ Pranzo incluso nel tour.
+
+Se avete domande, non esitate a contattarmi!
+
+Grazie,  Luci🌹`;
 
 const TPL_OVERRIDES_KEY = 'lucris_template_overrides_v1';
 function loadOverrides(){ try{ return JSON.parse(localStorage.getItem(TPL_OVERRIDES_KEY)) || {}; }catch(err){ return {}; } }
