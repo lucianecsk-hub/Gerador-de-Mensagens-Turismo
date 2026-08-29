@@ -169,7 +169,7 @@
         </div>
         <div class="field" id="arrival_field">
           <label>Chegada em Vegas (aprox.)</label>
-          <input type="text" id="f_arrival" value="4:00 de la tarde">
+          <input type="text" id="f_arrival" value="4:00 PM">
         </div>
       </div>
     </div>
@@ -834,7 +834,7 @@ Soy *{{guide}}*, tu guía para el tour a *{{tour}}*!
 📋 Por favor, lee toda la información y contesta *OK*. ¡Gracias!
 
 ⚠️ *IMPORTANTE*
-Favor de llegar *5 min antes* en el lugar y hora indicados en este mensaje. *Los retrasos pueden causar la pérdida del tour.* ¡Gracias!
+Favor de llegar *_5̲ ̲m̲i̲n̲ ̲a̲n̲t̲e̲s̲_* en el lugar y hora indicados en este mensaje. *_L̲o̲s̲ ̲r̲e̲t̲r̲a̲s̲o̲s̲ ̲p̲u̲e̲d̲e̲n̲ ̲c̲a̲u̲s̲a̲r̲ ̲l̲a̲ ̲p̲é̲r̲d̲i̲d̲a̲ ̲d̲e̲l̲ ̲t̲o̲u̲r̲.̲_* ¡Gracias!
 
 ➖➖➖➖➖➖➖➖➖➖
 📅 Día: *{{day}}*
@@ -868,7 +868,7 @@ Sou *{{guide}}*, seu guia para o tour ao *{{tour}}*!
 📋 Por favor, leia todas as informações e responda *OK*. Obrigado!
 
 ⚠️ *IMPORTANTE*
-Por favor, chegue *5 min antes* no local e horário indicados nesta mensagem. *Atrasos podem causar a perda do tour.* Obrigado!
+Por favor, chegue *_5̲ ̲m̲i̲n̲ ̲a̲n̲t̲e̲s̲_* no local e horário indicados nesta mensagem. *_A̲t̲r̲a̲s̲o̲s̲ ̲p̲o̲d̲e̲m̲ ̲c̲a̲u̲s̲a̲r̲ ̲a̲ ̲p̲e̲r̲d̲a̲ ̲d̲o̲ ̲t̲o̲u̲r̲.̲_* Obrigado!
 
 ➖➖➖➖➖➖➖➖➖➖
 📅 Dia: *{{day}}*
@@ -902,7 +902,7 @@ I'm *{{guide}}*, your guide for the *{{tour}}* tour!
 📋 Please read all the information and reply *OK*. Thank you!
 
 ⚠️ *IMPORTANT*
-Please arrive *5 min before* the location and time indicated in this message. *Delays may cause you to lose your spot on the tour.* Thank you!
+Please arrive *_5̲ ̲m̲i̲n̲ ̲b̲e̲f̲o̲r̲e̲_* the location and time indicated in this message. *_D̲e̲l̲a̲y̲s̲ ̲m̲a̲y̲ ̲c̲a̲u̲s̲e̲ ̲y̲o̲u̲ ̲t̲o̲ ̲l̲o̲s̲e̲ ̲y̲o̲u̲r̲ ̲s̲p̲o̲t̲ ̲o̲n̲ ̲t̲h̲e̲ ̲t̲o̲u̲r̲.̲_* Thank you!
 
 ➖➖➖➖➖➖➖➖➖➖
 📅 Day: *{{day}}*
@@ -913,6 +913,7 @@ Please arrive *5 min before* the location and time indicated in this message. *D
 ➖➖➖➖➖➖➖➖➖➖
 
 💵 *TIPS INFORMATION IN THE USA*
+*TIP NOT INCLUDED*
 Dear guest, please note that gratuity is not included in your service. If you enjoyed the service, the standard is from \${{tip}} per person. Thank you!
 
 📍 It is the client's responsibility to locate the meeting point. We recommend doing so the night before the tour.
@@ -936,7 +937,7 @@ Sono *{{guide}}*, la tua guida per il tour a *{{tour}}*!
 📋 Ti preghiamo di leggere tutte le informazioni e rispondere *OK*. Grazie!
 
 ⚠️ *IMPORTANTE*
-Ti preghiamo di arrivare *5 min prima* nel luogo e orario indicati in questo messaggio. *I ritardi possono causare la perdita del tour.* Grazie!
+Ti preghiamo di arrivare *_5̲ ̲m̲i̲n̲ ̲p̲r̲i̲m̲a̲_* nel luogo e orario indicati in questo messaggio. *_I̲ ̲r̲i̲t̲a̲r̲d̲i̲ ̲p̲o̲s̲s̲o̲n̲o̲ ̲c̲a̲u̲s̲a̲r̲e̲ ̲l̲a̲ ̲p̲e̲r̲d̲i̲t̲a̲ ̲d̲e̲l̲ ̲t̲o̲u̲r̲.̲_* Grazie!
 
 ➖➖➖➖➖➖➖➖➖➖
 📅 Giorno: *{{day}}*
@@ -973,11 +974,23 @@ function getActiveTemplate(group, lang){
   return DEFAULT_TEMPLATES[group][lang];
 }
 
+const DOOR_TRANSLATIONS = {
+  'Entrada principal/Lobby': { es: 'Entrada principal/Lobby', pt: 'Entrada principal/Lobby', en: 'Main entrance/Lobby', it: 'Ingresso principale/Lobby' },
+  'Tour bus / Uber': { es: 'Tour bus / Uber', pt: 'Tour bus / Uber', en: 'Tour bus / Uber', it: 'Tour bus / Uber' },
+  'Tour bus': { es: 'Tour bus', pt: 'Tour bus', en: 'Tour bus', it: 'Tour bus' },
+  'Uber': { es: 'Uber', pt: 'Uber', en: 'Uber', it: 'Uber' }
+};
+function translateDoor(doorValue, lang){
+  const map = DOOR_TRANSLATIONS[doorValue];
+  return map ? (map[lang] || doorValue) : doorValue;
+}
+
 function render(){
   const f = getFields();
   const tour = document.getElementById('f_tour').value;
   const group = getTourGroup(tour);
 
+  f.door = translateDoor(f.door, currentLang);
   f.tempUnit = currentLang === 'en' ? 'F' : 'C';
   f.tempDisplay = currentLang === 'en' ? cToF(f.tempc) : f.tempc;
   f.tempMinDisplay = currentLang === 'en' ? cToF(f.tempmin) : f.tempmin;
