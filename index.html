@@ -191,6 +191,27 @@
     </div>
 
     <div class="card">
+      <h2>Veículo (opcional)</h2>
+      <div class="field">
+        <label>Tipo de veículo</label>
+        <select id="f_vehicle">
+          <option value="">— não informar —</option>
+        </select>
+        <input type="text" id="f_vehicle_custom" placeholder="Descreva o veículo" style="display:none; margin-top:6px;">
+      </div>
+      <div class="hint" style="margin-top:0; margin-bottom:12px;">Se quiser, mostre ao cliente a foto do veículo que fará a recolha. A foto é salva vinculada ao tipo de veículo escolhido. Veja todas na aba <b>🖼️ Biblioteca</b>.</div>
+      <div class="photo-box">
+        <img id="vehicle_photo_preview" style="display:none;">
+        <label for="f_vehicle_photo" class="file-btn">🚐 Escolher foto do veículo</label>
+        <input type="file" id="f_vehicle_photo" accept="image/*" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;">
+      </div>
+      <div class="actions" style="margin-top:10px;">
+        <button class="btn btn-secondary" id="save_vehicle_btn">Salvar foto para este veículo</button>
+        <button class="btn btn-secondary" id="delete_vehicle_btn">Excluir foto deste veículo</button>
+      </div>
+    </div>
+
+    <div class="card">
       <h2>Mensagem gerada</h2>
       <div class="lang-tabs">
         <button class="lang-btn active" data-lang="es">Español</button>
@@ -200,11 +221,14 @@
       </div>
       <div class="preview" id="preview"></div>
       <div class="actions">
-        <button class="btn btn-primary" id="share_btn" style="display:none;">📤 Compartilhar (texto + foto)</button>
+        <button class="btn btn-primary" id="share_btn" style="display:none;">📤 Compartilhar (texto + fotos)</button>
       </div>
       <div class="actions">
         <button class="btn btn-secondary" id="copy_btn">Copiar texto</button>
-        <button class="btn btn-secondary" id="photo_dl_btn">Baixar foto</button>
+        <button class="btn btn-secondary" id="photo_dl_btn">Baixar foto do ponto</button>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" id="vehicle_dl_btn" style="display:none;">Baixar foto do veículo</button>
       </div>
       <div class="copied-msg" id="copied_msg">Copiado ✓</div>
     </div>
@@ -237,6 +261,32 @@
       <div class="hint" style="margin-top:0;margin-bottom:12px;">Pode salvar quantas fotos quiser por hotel. A mais recente é a que entra sozinha na mensagem. Toque no ✕ pra excluir uma foto.</div>
       <div id="lib_full_list"></div>
       <div class="hint" id="lib_empty_msg" style="display:none;">Nenhuma foto salva ainda.</div>
+    </div>
+
+    <div class="card">
+      <h2>Adicionar foto de veículo à biblioteca</h2>
+      <div class="field">
+        <label>Tipo de veículo</label>
+        <select id="lib_vehicle_select">
+          <option value="">— selecionar —</option>
+        </select>
+        <input type="text" id="lib_vehicle_custom" placeholder="Descreva o veículo" style="display:none; margin-top:6px;">
+      </div>
+      <div class="photo-box">
+        <img id="lib_vehicle_photo_preview" style="display:none;">
+        <label for="lib_vehicle_photo_input" class="file-btn">🚐 Escolher foto</label>
+        <input type="file" id="lib_vehicle_photo_input" accept="image/*" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;">
+      </div>
+      <div class="actions" style="margin-top:10px;">
+        <button class="btn btn-primary" id="lib_vehicle_save_btn">Salvar na biblioteca</button>
+      </div>
+      <div class="copied-msg" id="lib_vehicle_saved_msg">Salvo ✓</div>
+    </div>
+    <div class="card">
+      <h2>Fotos salvas por veículo</h2>
+      <div class="hint" style="margin-top:0;margin-bottom:12px;">Pode salvar quantas fotos quiser por tipo de veículo. A mais recente é a que entra sozinha na mensagem. Toque no ✕ pra excluir uma foto.</div>
+      <div id="veh_full_list"></div>
+      <div class="hint" id="veh_empty_msg" style="display:none;">Nenhuma foto salva ainda.</div>
     </div>
   </div>
 
@@ -281,6 +331,8 @@ const ids = ['f_guide','f_tour','f_day','f_hour','f_hotel','f_door','f_tempc','f
 let currentLang = 'es';
 let photoDataUrl = null;
 let photoIsAuto = false;
+let vehiclePhotoDataUrl = null;
+let vehiclePhotoIsAuto = false;
 
 const HOTELS = ['Aria','Bellagio','Bluegreen Vacation','Caesars Palace','Casino Royale','Circa','Circus Circus','Club Wyndham Grand Desert','Cosmopolitan','Delano','Downtown Grand','Ellis Island','Encore','Excalibur','Flamingo','Fontainebleau','Four Queens','Four Seasons','Golden Nugget','Harrah\'s','Hilton Grand Vacation Club','Horseshoe','Jockey Club','Luxor','Mandalay Bay','MGM Grand','New York-New York','Palazzo','Paris','Park MGM','Planet Hollywood','Plaza','Polo Towers','Resorts World','Rio','Sahara','The D','The LINQ','The Strat','Treasure Island (TI)','Tuscany','Vdara','Venetian','Waldorf Astoria','Westgate','Wynn','Outro (digitar)'];
 
@@ -291,6 +343,17 @@ function populateHotelSelect(){
     const opt = document.createElement('option');
     opt.value = name; opt.textContent = name;
     select.appendChild(opt);
+  });
+}
+
+const VEHICLE_TYPES = ['Van', 'Carro', 'Outro (digitar)'];
+
+function populateVehicleSelect(selectEl, placeholder){
+  selectEl.innerHTML = `<option value="">${placeholder}</option>`;
+  VEHICLE_TYPES.forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name; opt.textContent = name;
+    selectEl.appendChild(opt);
   });
 }
 
@@ -357,12 +420,12 @@ function normalizeLib(raw){
   return norm;
 }
 
-async function loadLibrary(){
+async function loadLibraryByKey(dbKey){
   try{
     const db = await openPhotoDB();
     const raw = await new Promise((resolve, reject) => {
       const tx = db.transaction(IDB_STORE, 'readonly');
-      const req = tx.objectStore(IDB_STORE).get('data');
+      const req = tx.objectStore(IDB_STORE).get(dbKey);
       req.onsuccess = () => resolve(req.result || {});
       req.onerror = () => reject(req.error);
     });
@@ -372,12 +435,12 @@ async function loadLibrary(){
   }
 }
 
-async function saveLibrary(lib){
+async function saveLibraryByKey(dbKey, lib){
   try{
     const db = await openPhotoDB();
     await new Promise((resolve, reject) => {
       const tx = db.transaction(IDB_STORE, 'readwrite');
-      tx.objectStore(IDB_STORE).put(lib, 'data');
+      tx.objectStore(IDB_STORE).put(lib, dbKey);
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
     });
@@ -387,6 +450,11 @@ async function saveLibrary(lib){
     return false;
   }
 }
+
+function loadLibrary(){ return loadLibraryByKey('data'); }
+function saveLibrary(lib){ return saveLibraryByKey('data', lib); }
+function loadVehicleLibrary(){ return loadLibraryByKey('vehicleData'); }
+function saveVehicleLibrary(lib){ return saveLibraryByKey('vehicleData', lib); }
 
 async function migrateOldLibraryIfNeeded(){
   try{
@@ -463,6 +531,44 @@ async function renderLibraryScreen(){
       refreshPickupUI();
     });
   });
+}
+
+async function renderVehicleLibraryScreen(){
+  const lib = await loadVehicleLibrary();
+  const names = Object.keys(lib).filter(n => lib[n] && lib[n].length).sort();
+  const container = document.getElementById('veh_full_list');
+  const emptyMsg = document.getElementById('veh_empty_msg');
+  container.innerHTML = '';
+  emptyMsg.style.display = names.length ? 'none' : 'block';
+  names.forEach(name => {
+    const row = document.createElement('div');
+    row.className = 'lib-hotel-group';
+    const photosHtml = lib[name].map((photo, idx) =>
+      `<div class="lib-photo-thumb">
+         <img src="${photo}">
+         <button class="veh-photo-del" data-name="${name}" data-idx="${idx}">✕</button>
+       </div>`
+    ).join('');
+    row.innerHTML = `<div class="lib-name">${name}</div><div class="lib-photos-row">${photosHtml}</div>`;
+    container.appendChild(row);
+  });
+  container.querySelectorAll('.veh-photo-del').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const name = btn.dataset.name;
+      const idx = parseInt(btn.dataset.idx, 10);
+      const lib2 = await loadVehicleLibrary();
+      if(lib2[name]){
+        lib2[name].splice(idx, 1);
+        if(lib2[name].length === 0) delete lib2[name];
+      }
+      await saveVehicleLibrary(lib2);
+      refreshVehicleUI();
+    });
+  });
+}
+
+async function refreshVehicleUI(){
+  renderVehicleLibraryScreen();
 }
 
 function formatDayDisplay(isoDate){
@@ -1374,12 +1480,35 @@ async function applyHotelPhoto(){
     photoDataUrl = null; photoIsAuto = false;
     document.getElementById('photo_preview').style.display = 'none';
   }
+  updateShareButtonVisibility();
+}
+
+async function applyVehiclePhoto(){
+  const vehicle = document.getElementById('f_vehicle').value;
+  const custom = vehicle === 'Outro (digitar)';
+  document.getElementById('f_vehicle_custom').style.display = custom ? 'block' : 'none';
+  const lib = await loadVehicleLibrary();
+  const name = custom ? document.getElementById('f_vehicle_custom').value.trim() : vehicle;
+  const photo = name ? latestPhoto(lib, name) : null;
+  const img = document.getElementById('vehicle_photo_preview');
+  const dlBtn = document.getElementById('vehicle_dl_btn');
+  if(photo){
+    vehiclePhotoDataUrl = photo; vehiclePhotoIsAuto = true;
+    img.src = vehiclePhotoDataUrl; img.style.display = 'block';
+  }else if(vehiclePhotoIsAuto){
+    vehiclePhotoDataUrl = null; vehiclePhotoIsAuto = false;
+    img.style.display = 'none';
+  }
+  dlBtn.style.display = vehiclePhotoDataUrl ? 'block' : 'none';
+  updateShareButtonVisibility();
 }
 
 ids.forEach(id => document.getElementById(id).addEventListener('input', render));
 document.getElementById('f_tour').addEventListener('change', () => { toggleTempFields(); render(); });
 document.getElementById('f_hotel').addEventListener('change', () => { applyHotelPhoto(); render(); });
 document.getElementById('f_hotel_custom').addEventListener('input', () => { applyHotelPhoto(); render(); });
+document.getElementById('f_vehicle').addEventListener('change', () => { applyVehiclePhoto(); });
+document.getElementById('f_vehicle_custom').addEventListener('input', () => { applyVehiclePhoto(); });
 
 function toggleDoorCustom(){
   const val = document.getElementById('f_door').value;
@@ -1468,6 +1597,59 @@ document.getElementById('delete_pickup_btn').addEventListener('click', async () 
   applyHotelPhoto();
 });
 
+document.getElementById('f_vehicle_photo').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    vehiclePhotoDataUrl = await compressImage(file);
+    vehiclePhotoIsAuto = false;
+    const img = document.getElementById('vehicle_photo_preview');
+    img.src = vehiclePhotoDataUrl; img.style.display = 'block';
+    document.getElementById('vehicle_dl_btn').style.display = 'block';
+    updateShareButtonVisibility();
+  }catch(err){
+    alert('Não foi possível carregar essa foto. Tente outra.');
+  }
+});
+
+function getCurrentVehicleName(){
+  const vehicle = document.getElementById('f_vehicle').value;
+  if(vehicle === 'Outro (digitar)') return document.getElementById('f_vehicle_custom').value.trim();
+  return vehicle;
+}
+
+document.getElementById('save_vehicle_btn').addEventListener('click', async () => {
+  const name = getCurrentVehicleName();
+  if(!name){ alert('Selecione um tipo de veículo (ou digite o nome) primeiro.'); return; }
+  if(!vehiclePhotoDataUrl){ alert('Escolha uma foto primeiro.'); return; }
+  const lib = await loadVehicleLibrary();
+  if(!lib[name]) lib[name] = [];
+  if(lib[name][lib[name].length - 1] !== vehiclePhotoDataUrl) lib[name].push(vehiclePhotoDataUrl);
+  await saveVehicleLibrary(lib);
+  vehiclePhotoIsAuto = true;
+  refreshVehicleUI();
+});
+
+document.getElementById('delete_vehicle_btn').addEventListener('click', async () => {
+  const name = getCurrentVehicleName();
+  if(!name){ alert('Selecione um tipo de veículo primeiro.'); return; }
+  const lib = await loadVehicleLibrary();
+  if(!lib[name] || !lib[name].length){ alert('Este veículo não tem foto salva.'); return; }
+  lib[name].pop();
+  if(lib[name].length === 0) delete lib[name];
+  await saveVehicleLibrary(lib);
+  vehiclePhotoDataUrl = null; vehiclePhotoIsAuto = false;
+  document.getElementById('vehicle_photo_preview').style.display = 'none';
+  refreshVehicleUI();
+  applyVehiclePhoto();
+});
+
+document.getElementById('vehicle_dl_btn').addEventListener('click', () => {
+  if(!vehiclePhotoDataUrl){ alert('Carregue uma foto do veículo primeiro.'); return; }
+  const a = document.createElement('a');
+  a.href = vehiclePhotoDataUrl; a.download = 'veiculo.jpg'; a.click();
+});
+
 document.getElementById('copy_btn').addEventListener('click', async () => {
   const text = document.getElementById('preview').textContent;
   try{ await navigator.clipboard.writeText(text); }
@@ -1496,16 +1678,19 @@ async function dataUrlToFile(dataUrl, filename){
 function updateShareButtonVisibility(){
   const btn = document.getElementById('share_btn');
   const supported = !!(navigator.share && navigator.canShare);
-  btn.style.display = (supported && photoDataUrl) ? 'block' : 'none';
+  const hasPhoto = !!(photoDataUrl || vehiclePhotoDataUrl);
+  btn.style.display = (supported && hasPhoto) ? 'block' : 'none';
 }
 
 document.getElementById('share_btn').addEventListener('click', async () => {
-  if(!photoDataUrl){ alert('Carregue uma foto do ponto de encontro primeiro.'); return; }
+  if(!photoDataUrl && !vehiclePhotoDataUrl){ alert('Carregue ao menos uma foto primeiro.'); return; }
   const text = document.getElementById('preview').textContent;
   try{
-    const file = await dataUrlToFile(photoDataUrl, 'ponto-encontro.jpg');
-    if(navigator.canShare && navigator.canShare({ files: [file] })){
-      await navigator.share({ text, files: [file] });
+    const files = [];
+    if(photoDataUrl) files.push(await dataUrlToFile(photoDataUrl, 'ponto-encontro.jpg'));
+    if(vehiclePhotoDataUrl) files.push(await dataUrlToFile(vehiclePhotoDataUrl, 'veiculo.jpg'));
+    if(files.length && navigator.canShare && navigator.canShare({ files })){
+      await navigator.share({ text, files });
     }else{
       await navigator.share({ text });
     }
@@ -1523,7 +1708,7 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.classList.add('active');
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-' + btn.dataset.screen).classList.add('active');
-    if(btn.dataset.screen === 'biblioteca') renderLibraryScreen();
+    if(btn.dataset.screen === 'biblioteca'){ renderLibraryScreen(); renderVehicleLibraryScreen(); }
     if(btn.dataset.screen === 'mensagens') renderTplScreen();
   });
 });
@@ -1662,11 +1847,58 @@ document.getElementById('lib_save_btn').addEventListener('click', async () => {
   setTimeout(() => msg.style.display = 'none', 1800);
 });
 
+/* ===== FORMULÁRIO DE CADASTRO DE VEÍCULO NA BIBLIOTECA ===== */
+let libVehiclePhotoDataUrl = null;
+
+document.getElementById('lib_vehicle_select').addEventListener('change', () => {
+  const custom = document.getElementById('lib_vehicle_select').value === 'Outro (digitar)';
+  document.getElementById('lib_vehicle_custom').style.display = custom ? 'block' : 'none';
+});
+
+document.getElementById('lib_vehicle_photo_input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    libVehiclePhotoDataUrl = await compressImage(file);
+    const img = document.getElementById('lib_vehicle_photo_preview');
+    img.src = libVehiclePhotoDataUrl; img.style.display = 'block';
+  }catch(err){
+    alert('Não foi possível carregar essa foto. Tente outra.');
+  }
+});
+
+document.getElementById('lib_vehicle_save_btn').addEventListener('click', async () => {
+  const sel = document.getElementById('lib_vehicle_select').value;
+  const name = sel === 'Outro (digitar)' ? document.getElementById('lib_vehicle_custom').value.trim() : sel;
+  if(!name){ alert('Selecione um tipo de veículo (ou digite o nome) primeiro.'); return; }
+  if(!libVehiclePhotoDataUrl){ alert('Escolha uma foto primeiro.'); return; }
+  const lib = await loadVehicleLibrary();
+  if(!lib[name]) lib[name] = [];
+  lib[name].push(libVehiclePhotoDataUrl);
+  const ok = await saveVehicleLibrary(lib);
+  if(!ok) return;
+
+  // limpa o formulário
+  libVehiclePhotoDataUrl = null;
+  document.getElementById('lib_vehicle_photo_preview').style.display = 'none';
+  document.getElementById('lib_vehicle_photo_input').value = '';
+  document.getElementById('lib_vehicle_select').value = '';
+  document.getElementById('lib_vehicle_custom').value = '';
+  document.getElementById('lib_vehicle_custom').style.display = 'none';
+
+  refreshVehicleUI();
+  const msg = document.getElementById('lib_vehicle_saved_msg');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 1800);
+});
+
 populateHotelSelect();
 populateLibHotelSelect();
+populateVehicleSelect(document.getElementById('f_vehicle'), '— não informar —');
+populateVehicleSelect(document.getElementById('lib_vehicle_select'), '— selecionar —');
 toggleDoorCustom();
 toggleTempFields();
-migrateOldLibraryIfNeeded().then(() => refreshPickupUI());
+migrateOldLibraryIfNeeded().then(() => { refreshPickupUI(); refreshVehicleUI(); });
 
 const todayISO = new Date().toISOString().slice(0, 10);
 document.getElementById('f_day').value = todayISO;
