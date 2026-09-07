@@ -638,11 +638,23 @@ async function refreshVehicleUI(){
   renderVehicleLibraryScreen();
 }
 
-function formatDayDisplay(isoDate){
+const MONTH_NAMES = {
+  es: ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],
+  pt: ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],
+  en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+  it: ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre']
+};
+
+function formatDayDisplay(isoDate, lang){
   if(!isoDate) return '';
   const parts = isoDate.split('-');
   if(parts.length !== 3) return isoDate;
-  return `${parts[1]}/${parts[2]}`;
+  const day = parseInt(parts[2], 10);
+  const monthIdx = parseInt(parts[1], 10) - 1;
+  const months = MONTH_NAMES[lang] || MONTH_NAMES.es;
+  const monthName = months[monthIdx] || parts[1];
+  if(lang === 'en') return `${monthName} ${day}`;
+  return `${day} de ${monthName}`;
 }
 
 function formatHourDisplay(time24){
@@ -660,7 +672,6 @@ function formatHourDisplay(time24){
 function getFields(){
   const o = {};
   ids.forEach(id => o[id.replace('f_','')] = document.getElementById(id).value.trim());
-  o.day = formatDayDisplay(document.getElementById('f_day').value);
   o.hour = formatHourDisplay(document.getElementById('f_hour').value);
   o.arrival = formatHourDisplay(document.getElementById('f_arrival').value);
   if(o.hotel === 'Outro (digitar)') o.hotel = document.getElementById('f_hotel_custom').value.trim();
@@ -1521,6 +1532,7 @@ function render(){
   const tour = document.getElementById('f_tour').value;
   const group = getTourGroup(tour);
 
+  f.day = formatDayDisplay(document.getElementById('f_day').value, currentLang);
   f.door = translateDoor(f.door, currentLang);
   f.tempUnit = currentLang === 'en' ? 'F' : 'C';
   f.tempDisplay = currentLang === 'en' ? cToF(f.tempc) : f.tempc;
