@@ -326,6 +326,7 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const ids = ['f_guide','f_tour','f_day','f_hour','f_hotel','f_door','f_tempc','f_place','f_tempmin','f_tempmax','f_tip','f_arrival'];
 let currentLang = 'es';
@@ -420,7 +421,8 @@ function normalizeLib(raw){
   return norm;
 }
 
-async function loadLibraryByKey(dbKey){
+/* ===== CACHE LOCAL (IndexedDB) — usado como fallback offline ===== */
+async function loadLocalCache(dbKey){
   try{
     const db = await openPhotoDB();
     const raw = await new Promise((resolve, reject) => {
@@ -435,7 +437,7 @@ async function loadLibraryByKey(dbKey){
   }
 }
 
-async function saveLibraryByKey(dbKey, lib){
+async function saveLocalCache(dbKey, lib){
   try{
     const db = await openPhotoDB();
     await new Promise((resolve, reject) => {
@@ -446,9 +448,59 @@ async function saveLibraryByKey(dbKey, lib){
     });
     return true;
   }catch(err){
+    return false;
+  }
+}
+
+/* ===== SUPABASE (nuvem) — sincroniza fotos entre aparelhos ===== */
+const SUPABASE_URL = 'https://fqnmgfrvnyrcgqfknnue.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_nKPtnoR3IVdWoI6GgN3ffw_c7XmCPVt';
+const SUPABASE_BUCKET = 'gerador-mensagens-fotos';
+let sbClient = null;
+
+function getSupabase(){
+  if(sbClient) return sbClient;
+  if(typeof window.supabase === 'undefined') return null;
+  try{
+    sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  }catch(err){
+    sbClient = null;
+  }
+  return sbClient;
+}
+
+async function loadLibraryByKey(dbKey){
+  try{
+    const sb = getSupabase();
+    if(sb){
+      const { data, error } = await sb.storage.from(SUPABASE_BUCKET).download(`${dbKey}.json`);
+      if(!error && data){
+        const text = await data.text();
+        const parsed = normalizeLib(JSON.parse(text));
+        saveLocalCache(dbKey, parsed);
+        return parsed;
+      }
+    }
+  }catch(err){ /* sem internet ou nuvem indisponível — segue pro cache local */ }
+  return await loadLocalCache(dbKey);
+}
+
+async function saveLibraryByKey(dbKey, lib){
+  const savedLocal = await saveLocalCache(dbKey, lib);
+  let savedCloud = false;
+  try{
+    const sb = getSupabase();
+    if(sb){
+      const blob = new Blob([JSON.stringify(lib)], { type: 'application/json' });
+      const { error } = await sb.storage.from(SUPABASE_BUCKET).upload(`${dbKey}.json`, blob, { upsert: true, contentType: 'application/json' });
+      savedCloud = !error;
+    }
+  }catch(err){ /* segue — já salvou local */ }
+  if(!savedLocal && !savedCloud){
     alert('Não foi possível salvar a foto. Tente novamente, ou exclua fotos antigas que não usa mais.');
     return false;
   }
+  return true;
 }
 
 function loadLibrary(){ return loadLibraryByKey('data'); }
@@ -458,22 +510,37 @@ function saveVehicleLibrary(lib){ return saveLibraryByKey('vehicleData', lib); }
 
 async function migrateOldLibraryIfNeeded(){
   try{
-    const db = await openPhotoDB();
-    const existing = await new Promise((resolve) => {
-      const tx = db.transaction(IDB_STORE, 'readonly');
-      const req = tx.objectStore(IDB_STORE).get('data');
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => resolve(null);
-    });
-    if(!existing){
-      const raw = localStorage.getItem(LIB_KEY);
-      if(raw){
-        const parsed = JSON.parse(raw);
-        await saveLibrary(normalizeLib(parsed));
+    const raw = localStorage.getItem(LIB_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      const existingLocal = await loadLocalCache('data');
+      if(!existingLocal || !Object.keys(existingLocal).length){
+        await saveLocalCache('data', normalizeLib(parsed));
       }
     }
     // libera o espaço do localStorage que as fotos antigas ocupavam
     try{ localStorage.removeItem(LIB_KEY); }catch(e){}
+  }catch(err){ /* segue sem migrar */ }
+}
+
+async function migrateLocalToCloudIfNeeded(){
+  try{
+    const sb = getSupabase();
+    if(!sb) return;
+    for(const dbKey of ['data', 'vehicleData']){
+      let remoteEmpty = true;
+      try{
+        const { data, error } = await sb.storage.from(SUPABASE_BUCKET).download(`${dbKey}.json`);
+        remoteEmpty = !!error || !data;
+      }catch(e){ remoteEmpty = true; }
+      if(remoteEmpty){
+        const local = await loadLocalCache(dbKey);
+        if(local && Object.keys(local).length){
+          const blob = new Blob([JSON.stringify(local)], { type: 'application/json' });
+          await sb.storage.from(SUPABASE_BUCKET).upload(`${dbKey}.json`, blob, { upsert: true, contentType: 'application/json' });
+        }
+      }
+    }
   }catch(err){ /* segue sem migrar */ }
 }
 
@@ -1898,7 +1965,9 @@ populateVehicleSelect(document.getElementById('f_vehicle'), 'Nenhum');
 populateVehicleSelect(document.getElementById('lib_vehicle_select'), '— selecionar —');
 toggleDoorCustom();
 toggleTempFields();
-migrateOldLibraryIfNeeded().then(() => { refreshPickupUI(); refreshVehicleUI(); });
+migrateOldLibraryIfNeeded()
+  .then(() => migrateLocalToCloudIfNeeded())
+  .then(() => { refreshPickupUI(); refreshVehicleUI(); });
 
 const todayISO = new Date().toISOString().slice(0, 10);
 document.getElementById('f_day').value = todayISO;
