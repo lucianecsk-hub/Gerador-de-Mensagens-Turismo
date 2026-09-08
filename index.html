@@ -220,8 +220,9 @@
         <button class="lang-btn" data-lang="it">Italiano</button>
       </div>
       <div class="preview" id="preview"></div>
+      <div class="hint" style="margin-top:0;">Copie e envie o texto primeiro; depois toque em "Compartilhar foto(s)" — assim ela chega como mensagem separada, logo depois do texto.</div>
       <div class="actions">
-        <button class="btn btn-primary" id="share_btn" style="display:none;">📤 Compartilhar (texto + fotos)</button>
+        <button class="btn btn-primary" id="share_btn" style="display:none;">📤 Compartilhar foto(s)</button>
       </div>
       <div class="actions">
         <button class="btn btn-secondary" id="copy_btn">Copiar texto</button>
@@ -1795,19 +1796,18 @@ function updateShareButtonVisibility(){
 
 document.getElementById('share_btn').addEventListener('click', async () => {
   if(!photoDataUrl && !vehiclePhotoDataUrl){ alert('Carregue ao menos uma foto primeiro.'); return; }
-  const text = document.getElementById('preview').textContent;
   try{
     const files = [];
     if(photoDataUrl) files.push(await dataUrlToFile(photoDataUrl, 'ponto-encontro.jpg'));
     if(vehiclePhotoDataUrl) files.push(await dataUrlToFile(vehiclePhotoDataUrl, 'veiculo.jpg'));
     if(files.length && navigator.canShare && navigator.canShare({ files })){
-      await navigator.share({ text, files });
+      await navigator.share({ files });
     }else{
-      await navigator.share({ text });
+      alert('Este navegador não permite compartilhar fotos direto. Use o botão "Baixar foto" e anexe manualmente no WhatsApp.');
     }
   }catch(err){
     if(err && err.name !== 'AbortError'){
-      alert('Não foi possível compartilhar. Use os botões de Copiar texto e Baixar foto.');
+      alert('Não foi possível compartilhar. Use os botões de Baixar foto.');
     }
   }
 });
