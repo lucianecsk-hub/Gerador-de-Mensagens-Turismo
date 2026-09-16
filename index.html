@@ -2016,6 +2016,17 @@ migrateOldLibraryIfNeeded()
 const todayISO = new Date().toISOString().slice(0, 10);
 document.getElementById('f_day').value = todayISO;
 
+/* ===== LEMBRAR ÚLTIMA TEMPERATURA DIGITADA ===== */
+const LAST_TEMP_KEYS = { f_tempc: 'lucris_last_tempc', f_tempmin: 'lucris_last_tempmin', f_tempmax: 'lucris_last_tempmax' };
+Object.keys(LAST_TEMP_KEYS).forEach(fieldId => {
+  const storageKey = LAST_TEMP_KEYS[fieldId];
+  const saved = localStorage.getItem(storageKey);
+  if(saved !== null) document.getElementById(fieldId).value = saved;
+  document.getElementById(fieldId).addEventListener('input', (e) => {
+    try{ localStorage.setItem(storageKey, e.target.value); }catch(err){}
+  });
+});
+
 render();
 </script>
 
