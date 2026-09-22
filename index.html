@@ -2027,6 +2027,24 @@ Object.keys(LAST_TEMP_KEYS).forEach(fieldId => {
   });
 });
 
+/* ===== LEMBRAR TEXTO DIGITADO EM 'OUTRO (DIGITAR)' — HOTEL E PORTA ===== */
+const LAST_CUSTOM_KEYS = { f_hotel_custom: 'lucris_last_hotel_custom', f_door_custom: 'lucris_last_door_custom' };
+const CUSTOM_SELECT_OF = { f_hotel_custom: 'f_hotel', f_door_custom: 'f_door' };
+Object.keys(LAST_CUSTOM_KEYS).forEach(fieldId => {
+  const storageKey = LAST_CUSTOM_KEYS[fieldId];
+  const saved = localStorage.getItem(storageKey);
+  if(saved){
+    document.getElementById(fieldId).value = saved;
+    document.getElementById(fieldId).style.display = 'block';
+    document.getElementById(CUSTOM_SELECT_OF[fieldId]).value = 'Outro (digitar)';
+  }
+  document.getElementById(fieldId).addEventListener('input', (e) => {
+    try{ localStorage.setItem(storageKey, e.target.value); }catch(err){}
+  });
+});
+toggleDoorCustom();
+applyHotelPhoto();
+
 render();
 </script>
 
